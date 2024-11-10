@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
 const StudentSignScreen = ({ navigation }) => {
-    const [text, setText] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     return (
         <View style={styles.container}>
@@ -11,15 +12,16 @@ const StudentSignScreen = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Student Email"
-                onChangeText={setText}
-                value={text}
+                onChangeText={setEmail}
+                value={email}
             />
 
             <TextInput
                 style={styles.input}
                 placeholder="Password"
-                onChangeText={setText}
-                value={text}
+                onChangeText={setPassword}
+                value={password}
+                secureTextEntry
             />
 
             <TouchableOpacity
