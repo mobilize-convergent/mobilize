@@ -1,26 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput, } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 
-const SignScreen = ({ navigation }) => {
+const TrainingScreen = ({ navigation }) => {
     const [text, setText] = useState('');
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Sign Up</Text>
+            <Text style={styles.title}>Start your Training!</Text>
+
+            <Text>In order to join user base , please start your training etc. </Text>
+    
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('Student')}
+                onPress={() => navigation.navigate('Home')}
             >
-                <Text style={styles.buttonText}>Individual with a Disability</Text>
+                <Text style={styles.buttonText}>Begin</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('Volunteer')}
-            >
-                <Text style={styles.buttonText}>Volunteer / Helper</Text>
-            </TouchableOpacity>
+            <Text>Side Note for dev: will need placeholder for this screen and talk to design on what it should look like</Text>
         </View>
     );
 };
@@ -61,4 +59,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SignScreen;
+export default TrainingScreen;

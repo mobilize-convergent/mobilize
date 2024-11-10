@@ -1,25 +1,32 @@
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput, } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 
-const SignScreen = ({ navigation }) => {
+const VolunteerSignScreen = ({ navigation }) => {
     const [text, setText] = useState('');
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Sign Up</Text>
 
-            <TouchableOpacity
-                style={styles.button}
-                onPress={() => navigation.navigate('Student')}
-            >
-                <Text style={styles.buttonText}>Individual with a Disability</Text>
-            </TouchableOpacity>
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                onChangeText={setText}
+                value={text}
+            />
+
+            <TextInput
+                style={styles.input}
+                placeholder="Password"
+                onChangeText={setText}
+                value={text}
+            />
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('Volunteer')}
+                onPress={() => navigation.navigate('Training')}
             >
-                <Text style={styles.buttonText}>Volunteer / Helper</Text>
+                <Text style={styles.buttonText}>Start Training</Text>
             </TouchableOpacity>
         </View>
     );
@@ -61,4 +68,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SignScreen;
+export default VolunteerSignScreen;
