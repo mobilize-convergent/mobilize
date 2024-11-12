@@ -1,16 +1,14 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import LandingScreen from './pages/LandingScreen';
-import LoginScreen from './pages/LoginScreen';
+import Landing from './pages/Landing';
+import Login from './pages/Login';
 
-import SignScreen from './pages/SignScreen';
-import StudentSignScreen from './pages/StudentSignScreen';
-import VolunteerSignScreen from './pages/volunteer/VolunteerSignScreen';
-import TrainingScreen from './pages/volunteer/TrainingScreen';
+import SignUp from './pages/SignUp';
+import Training from './pages/volunteer/Training';
 
-import HomeScreen from './pages/HomeScreen';
-import MapScreen from './pages/MapScreen';
+import VolunteerHome from './pages/volunteer/VolunteerHome';
+import Map from './pages/Map';
 
 const Stack = createStackNavigator();
 
@@ -18,16 +16,14 @@ export default function Index() {
   return (
     <NavigationContainer  independent={true}>
       <Stack.Navigator initialRouteName="Land">
-        <Stack.Screen name="Land" component={LandingScreen} />
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Land" component={Landing} />
+        <Stack.Screen name="Login" component={Login} />
 
-        <Stack.Screen name="Sign" component={SignScreen} />
-        <Stack.Screen name="Student" component={StudentSignScreen} />
-        <Stack.Screen name="Volunteer" component={VolunteerSignScreen} />
-        <Stack.Screen name="Training" component={TrainingScreen} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="VolunteerHome" component={VolunteerHome} />
+        <Stack.Screen name="Training" component={Training} />
 
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Map" component={MapScreen} />
+        <Stack.Screen name="Map" component={Map} />
       </Stack.Navigator>
     </NavigationContainer>
   );
