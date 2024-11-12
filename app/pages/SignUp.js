@@ -10,7 +10,7 @@ const SignUp = ({ navigation }) => {
     const handleLogin = () => {
         // Disabled jit credentials
         if (role === 'disabled') {
-            navigation.navigate('Login');
+            navigation.navigate('StudentHome');
         }
         // Volunteer credentials
         else if (role === 'volunteer') {

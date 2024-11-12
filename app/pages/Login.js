@@ -8,11 +8,11 @@ const Login = ({ navigation }) => {
     const handleLogin = () => {
         // Disabled jit credentials
         if (email === 'joe@joe.com' && password === 'joe') {
-            navigation.navigate('Land');
+            navigation.navigate('StudentHome');
         }
         // Volunteer credentials
         else if (email === 'bob@bob.com' && password === 'bob') {
-            navigation.navigate('VolunteerHomeScreen');
+            navigation.navigate('VolunteerHome');
         }
         // Invalid credentials
         else {
