@@ -6,8 +6,8 @@ import LoginScreen from './pages/LoginScreen';
 
 import SignScreen from './pages/SignScreen';
 import StudentSignScreen from './pages/StudentSignScreen';
-import VolunteerSignScreen from './pages/VolunteerSignScreen';
-import TrainingScreen from './pages/TrainingScreen';
+import VolunteerSignScreen from './pages/volunteer/VolunteerSignScreen';
+import TrainingScreen from './pages/volunteer/TrainingScreen';
 
 import HomeScreen from './pages/HomeScreen';
 import MapScreen from './pages/MapScreen';
