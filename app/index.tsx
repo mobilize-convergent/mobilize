@@ -16,7 +16,7 @@ export default function Index() {
   return (
     <NavigationContainer  independent={true}>
       <Stack.Navigator initialRouteName="Land">
-        <Stack.Screen name="Land" component={Landing} />
+        <Stack.Screen name="Land" component={Landing}/>
         <Stack.Screen name="Login" component={Login} />
 
         <Stack.Screen name="SignUp" component={SignUp} />

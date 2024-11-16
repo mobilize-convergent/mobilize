@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import Dropdown from '../components/Dropdown';
 
 const SignUp = ({ navigation }) => {
@@ -7,14 +8,35 @@ const SignUp = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
 
-    const handleLogin = () => {
-        // Disabled jit credentials
-        if (role === 'disabled') {
-            navigation.navigate('Login');
+    const handleSignUp = async () => {
+        const usersFileUri = '/Users/nithinsivakumar/dev/Convergent/txconvergent-accessibility-fall-24/app/users.json';
+        console.log('File URI:', usersFileUri);
+        let users = [];
+
+        try {
+            const dirInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory);
+            if (!dirInfo.exists) {
+                await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory, { intermediates: true });
+            }
+            if ((await FileSystem.getInfoAsync(usersFileUri)).exists) {
+                const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
+                users = JSON.parse(usersFile);
+            } else {
+                await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify([]));
+            }
+        } catch (error) {
+            console.log('Error reading users file:', error);
         }
-        // Volunteer credentials
-        else if (role === 'volunteer') {
-            navigation.navigate('Training');
+
+        users.push({ email, password, role });
+
+        try {
+            await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
+            Alert.alert("Sign Up Successful", "You can now log in.", [{ text: "OK" }]);
+            navigation.navigate('Login');
+        } catch (error) {
+            console.log('Error writing users file:', error);
+            Alert.alert("Sign Up Failed", "An error occurred. Please try again.", [{ text: "OK" }]);
         }
     };
 
@@ -59,7 +81,7 @@ const SignUp = ({ navigation }) => {
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={handleLogin}
+                onPress={handleSignUp}
             >
                 <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>

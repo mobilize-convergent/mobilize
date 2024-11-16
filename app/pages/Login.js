@@ -12,7 +12,7 @@ const Login = ({ navigation }) => {
         }
         // Volunteer credentials
         else if (email === 'bob@bob.com' && password === 'bob') {
-            navigation.navigate('VolunteerHomeScreen');
+            navigation.navigate('VolunteerHome');
         }
         // Invalid credentials
         else {
