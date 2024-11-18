@@ -9,28 +9,33 @@ const SignUp = ({ navigation }) => {
     const [role, setRole] = useState('');
 
     const handleSignUp = async () => {
-        const usersFileUri = '/Users/nithinsivakumar/dev/Convergent/txconvergent-accessibility-fall-24/app/users.json';
+        // Use FileSystem.documentDirectory for a writable file location
+        const usersFileUri = `${FileSystem.documentDirectory}users.json`;
         console.log('File URI:', usersFileUri);
         let users = [];
-
+    
         try {
-            const dirInfo = await FileSystem.getInfoAsync(FileSystem.documentDirectory);
-            if (!dirInfo.exists) {
-                await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory, { intermediates: true });
-            }
-            if ((await FileSystem.getInfoAsync(usersFileUri)).exists) {
+            // Check if the file exists
+            const fileInfo = await FileSystem.getInfoAsync(usersFileUri);
+            if (fileInfo.exists) {
+                // Read the file if it exists
                 const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
                 users = JSON.parse(usersFile);
             } else {
+                // Create the file with an empty array if it doesn't exist
                 await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify([]));
             }
         } catch (error) {
             console.log('Error reading users file:', error);
+            Alert.alert("Error", "Unable to access users file.");
+            return;
         }
-
+    
+        // Add the new user to the array
         users.push({ email, password, role });
-
+    
         try {
+            // Write the updated array back to the file
             await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
             Alert.alert("Sign Up Successful", "You can now log in.", [{ text: "OK" }]);
             navigation.navigate('Login');
@@ -39,6 +44,7 @@ const SignUp = ({ navigation }) => {
             Alert.alert("Sign Up Failed", "An error occurred. Please try again.", [{ text: "OK" }]);
         }
     };
+    
 
     const roleOptions = [
         { label: 'Disabled Student', value: 'disabled' },
