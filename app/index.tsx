@@ -16,14 +16,14 @@ export default function Index() {
   return (
     <NavigationContainer  independent={true}>
       <Stack.Navigator initialRouteName="Land">
-        <Stack.Screen name="Land" component={Landing}/>
-        <Stack.Screen name="Login" component={Login} />
+        <Stack.Screen name="Land" component={Landing} options={({headerShown: false})}/>
+        <Stack.Screen name="Login" component={Login} options={({headerShown: false})}/>
 
-        <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="VolunteerHome" component={VolunteerHome} />
-        <Stack.Screen name="Training" component={Training} />
+        <Stack.Screen name="SignUp" component={SignUp} options={({headerShown: false})}/>
+        <Stack.Screen name="VolunteerHome" component={VolunteerHome} options={({headerShown: false})}/>
+        <Stack.Screen name="Training" component={Training} options={({headerShown: false})}/>
 
-        <Stack.Screen name="Map" component={Map} />
+        <Stack.Screen name="Map" component={Map} options={({headerShown: false})}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
