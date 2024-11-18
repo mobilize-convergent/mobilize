@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import Dropdown from '../components/Dropdown';
 
 const SignUp = ({ navigation }) => {
@@ -7,16 +8,45 @@ const SignUp = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
 
-    const handleLogin = () => {
-        // Disabled jit credentials
-        if (role === 'disabled') {
-            navigation.navigate('StudentHome');
+    const handleSignUp = async () => {
+        // Use FileSystem.documentDirectory for a writable file location
+        const usersFileUri = `${FileSystem.documentDirectory}users.json`;
+        console.error("usersFileUri:"+usersFileUri);
+        console.log('File URI:', usersFileUri);
+        let users = [];
+    
+        try {
+            // Check if the file exists
+            const fileInfo = await FileSystem.getInfoAsync(usersFileUri);
+            if (fileInfo.exists) {
+                // Read the file if it exists
+                const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
+                users = JSON.parse(usersFile);
+                console.error("users: "+JSON.stringify(users));
+            } else {
+                // Create the file with an empty array if it doesn't exist
+                await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify([]));
+            }
+        } catch (error) {
+            console.log('Error reading users file:', error);
+            Alert.alert("Error", "Unable to access users file.");
+            return;
         }
-        // Volunteer credentials
-        else if (role === 'volunteer') {
-            navigation.navigate('Training');
+    
+        // Add the new user to the array
+        users.push({ email, password, role });
+    
+        try {
+            // Write the updated array back to the file
+            await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
+            Alert.alert("Sign Up Successful", "You can now log in.", [{ text: "OK" }]);
+            navigation.navigate('StudentHome');
+        } catch (error) {
+            console.log('Error writing users file:', error);
+            Alert.alert("Sign Up Failed", "An error occurred. Please try again.", [{ text: "OK" }]);
         }
     };
+    
 
     const roleOptions = [
         { label: 'Disabled Student', value: 'disabled' },
@@ -59,7 +89,7 @@ const SignUp = ({ navigation }) => {
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={handleLogin}
+                onPress={handleSignUp}
             >
                 <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
