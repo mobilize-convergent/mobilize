@@ -37,7 +37,7 @@ const Login = ({ navigation }) => {
                     navigation.reset({
                         index: 0,
                         routes: [
-                            { name: 'VolunteerHome' }
+                            { name: 'VolunteerTabs' }
                         ],
                     });
                 }

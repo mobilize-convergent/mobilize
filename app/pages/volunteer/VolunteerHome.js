@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, BottomNavigation } from 'react-native';
 
 const VolunteerHome = ({ navigation }) => {
   return (
