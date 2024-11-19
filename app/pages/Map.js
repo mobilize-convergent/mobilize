@@ -1,8 +1,56 @@
 import { Feather } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
-import React, { useRef, useState } from 'react';
-import { FlatList, Keyboard, Platform, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  FlatList,
+  Keyboard,
+  Platform,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import MapView, { Callout, Marker } from 'react-native-maps';
+const CustomMarker = React.memo(({ title, isSelected }) => (
+  <View style={[styles.customMarker, { zIndex: isSelected ? 1 : 0 }]}>
+    <View style={[styles.markerPin, isSelected && styles.selectedMarkerPin]}>
+      <View style={styles.markerDot} />
+    </View>
+    <View style={[styles.markerLabelContainer, isSelected && styles.selectedMarkerLabel]}>
+      <Text style={styles.markerLabel} numberOfLines={1}>
+        {title}
+      </Text>
+    </View>
+  </View>
+));
+const CustomCallout = React.memo(({ title, description, accessibility }) => (
+  <View style={styles.calloutWrapper}>
+    <BlurView intensity={40} tint="dark" style={styles.calloutContainer}>
+      <View style={styles.calloutContent}>
+        <View style={styles.calloutHeader}>
+          <Feather name="map-pin" size={16} color="#BF5700" style={styles.calloutIcon} />
+          <View style={styles.calloutTextContainer}>
+            <Text style={styles.calloutTitle} numberOfLines={2}>
+              {title}
+            </Text>
+            <Text style={styles.calloutDescription} numberOfLines={2}>
+              {description}
+            </Text>
+            <View style={styles.accessibilityContainer}>
+              <Feather name="info" size={12} color="#BF5700" style={styles.accessibilityIcon} />
+              <Text style={styles.calloutAccessibility}>
+                {accessibility}
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </BlurView>
+    <View style={styles.calloutArrow} />
+  </View>
+));
 const MapScreen = () => {
   const mapRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,74 +89,64 @@ const MapScreen = () => {
     latitudeDelta: 0.015,
     longitudeDelta: 0.015,
   };
-  const handleBuildingSelect = (building) => {
+  const handleBuildingSelect = useCallback((building) => {
     Keyboard.dismiss();
     setSearchQuery(building.title);
     setFilteredBuildings([]);
     setIsSearchFocused(false);
     setSelectedBuilding(building);
-    setTimeout(() => {
+    // Use requestAnimationFrame to ensure smooth animation
+    requestAnimationFrame(() => {
       mapRef.current?.animateToRegion({
         latitude: building.latitude,
         longitude: building.longitude,
         latitudeDelta: 0.005,
         longitudeDelta: 0.005,
       }, 1000);
-    }, 100);
-  };
-  const handleSearchChange = (query) => {
+    });
+  }, []);
+  const handleSearchChange = useCallback((query) => {
     setSearchQuery(query);
     const filtered = buildings.filter((building) =>
       building.title.toLowerCase().includes(query.toLowerCase())
     );
     setFilteredBuildings(filtered);
-  };
-  const handleSearchFocus = () => {
+  }, [buildings]);
+  const handleSearchFocus = useCallback(() => {
     setIsSearchFocused(true);
     setFilteredBuildings(buildings);
-  };
-  const handleSearchBlur = () => {
+  }, [buildings]);
+  const handleSearchBlur = useCallback(() => {
     if (!searchQuery) {
       setIsSearchFocused(false);
     }
-  };
-  const CustomMarker = ({ title, isSelected }) => (
-    <View style={[styles.customMarker, { zIndex: isSelected ? 1 : 0 }]}>
-      <View style={[styles.markerPin, isSelected && styles.selectedMarkerPin]}>
-        <View style={styles.markerDot} />
-      </View>
-      <View style={[styles.markerLabelContainer, isSelected && styles.selectedMarkerLabel]}>
-        <Text style={styles.markerLabel} numberOfLines={1}>
-          {title}
-        </Text>
-      </View>
-    </View>
-  );
-  const CustomCallout = ({ title, description, accessibility }) => (
-    <View style={styles.calloutWrapper}>
-      <BlurView intensity={40} tint="dark" style={styles.calloutContainer}>
-        <View style={styles.calloutContent}>
-          <View style={styles.calloutHeader}>
-            <Feather name="map-pin" size={16} color="#BF5700" style={styles.calloutIcon} />
-            <View style={styles.calloutTextContainer}>
-              <Text style={styles.calloutTitle} numberOfLines={2}>
-                {title}
-              </Text>
-              <Text style={styles.calloutDescription} numberOfLines={2}>
-                {description}
-              </Text>
-              <View style={styles.accessibilityContainer}>
-                <Feather name="info" size={12} color="#BF5700" style={styles.accessibilityIcon} />
-                <Text style={styles.calloutAccessibility}>
-                  {accessibility}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </BlurView>
-      <View style={styles.calloutArrow} />
-    </View>
+  }, [searchQuery]);
+  // Memoize markers to prevent unnecessary re-renders
+  const renderMarkers = useMemo(() =>
+    buildings.map((building) => (
+      <Marker
+        key={building.id}
+        coordinate={{
+          latitude: building.latitude,
+          longitude: building.longitude,
+        }}
+        tracksViewChanges={false}
+        onPress={() => setSelectedBuilding(building)}
+      >
+        <CustomMarker
+          title={building.title}
+          isSelected={selectedBuilding?.id === building.id}
+        />
+        <Callout tooltip>
+          <CustomCallout
+            title={building.title}
+            description={building.description}
+            accessibility={building.accessibility}
+          />
+        </Callout>
+      </Marker>
+    )),
+    [buildings, selectedBuilding]
   );
   return (
     <SafeAreaView style={styles.container}>
@@ -121,29 +159,7 @@ const MapScreen = () => {
         minZoomLevel={13}
         maxZoomLevel={20}
       >
-        {buildings.map((building) => (
-          <Marker
-            key={building.id}
-            coordinate={{
-              latitude: building.latitude,
-              longitude: building.longitude,
-            }}
-            tracksViewChanges={Platform.OS === 'ios'}
-            onPress={() => setSelectedBuilding(building)}
-          >
-            <CustomMarker
-              title={building.title}
-              isSelected={selectedBuilding?.id === building.id}
-            />
-            <Callout tooltip>
-              <CustomCallout
-                title={building.title}
-                description={building.description}
-                accessibility={building.accessibility}
-              />
-            </Callout>
-          </Marker>
-        ))}
+        {renderMarkers}
       </MapView>
       <View style={styles.searchContainer}>
         <BlurView intensity={20} tint="dark" style={styles.searchBarWrapper}>
