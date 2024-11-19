@@ -1,24 +1,58 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 
 const Login = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const handleLogin = () => {
-        // Disabled jit credentials
-        if (email === 'joe@joe.com' && password === 'joe') {
-            navigation.navigate('StudentHome');
-        }
-        // Volunteer credentials
-        else if (email === 'bob@bob.com' && password === 'bob') {
-            navigation.navigate('VolunteerHome');
-        }
-        // Invalid credentials
-        else {
+    const handleLogin = async () => {
+        const usersFileUri = `${FileSystem.documentDirectory}users.json`;
+        
+        try {
+            // Check if the file exists
+            const fileInfo = await FileSystem.getInfoAsync(usersFileUri);
+            if (!fileInfo.exists) {
+                Alert.alert("Error", "No users found. Please sign up first.");
+                return;
+            }
+
+            // Read and parse the users file
+            const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
+            const users = JSON.parse(usersFile);
+
+            // Find user with matching credentials
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                // Navigate based on user role
+                if (user.role === 'disabled') {
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            { name: 'StudentHome' }
+                        ],
+                    });
+                } else if (user.role === 'volunteer') {
+                    navigation.reset({
+                        index: 0,
+                        routes: [
+                            { name: 'VolunteerHome' }
+                        ],
+                    });
+                }
+            } else {
+                Alert.alert(
+                    "Login Failed",
+                    "Invalid email or password. Please try again.",
+                    [{ text: "OK" }]
+                );
+            }
+        } catch (error) {
+            console.error('Error reading users file:', error);
             Alert.alert(
-                "Login Failed",
-                "Invalid email or password. Please try again.",
+                "Error",
+                "An error occurred while trying to log in. Please try again.",
                 [{ text: "OK" }]
             );
         }
@@ -31,19 +65,23 @@ const Login = ({ navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Email"
+                placeholderTextColor="#999"
                 onChangeText={setEmail}
                 value={email}
                 keyboardType="email-address"
                 autoCapitalize="none"
+                autoCorrect={false}
             />
 
             <TextInput
                 style={styles.input}
                 placeholder="Password"
+                placeholderTextColor="#999"
                 onChangeText={setPassword}
                 value={password}
                 secureTextEntry={true}
                 autoCapitalize="none"
+                autoCorrect={false}
             />
 
             <TouchableOpacity
@@ -77,6 +115,9 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingHorizontal: 10,
         width: '100%',
+        backgroundColor: '#fff',
+        color: '#000',
+        fontSize: 16,
     },
     button: {
         backgroundColor: '#007bff',

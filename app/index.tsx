@@ -19,8 +19,8 @@ export default function Index() {
   return (
     <NavigationContainer  independent={true}>
       <Stack.Navigator initialRouteName="Land">
-        <Stack.Screen name="Land" component={Landing} options={{headerShown:false}}/>
-        <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
+        <Stack.Screen name="Land" component={Landing} options={({headerShown: false})}/>
+        <Stack.Screen name="Login" component={Login} options={({headerShown: false})}/>
 
         <Stack.Screen name="SignUp" component={SignUp} options={{headerShown:false}}/>
 
@@ -29,7 +29,7 @@ export default function Index() {
 
         <Stack.Screen name="StudentHome" component={StudentHome} options={{headerShown:false}}/>
 
-        <Stack.Screen name="Map" component={Map} options={{headerShown:false}}/>
+        <Stack.Screen name="Map" component={Map} options={({headerShown: false})}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

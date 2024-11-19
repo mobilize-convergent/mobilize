@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
+import * as FileSystem from 'expo-file-system';
 import Dropdown from '../components/Dropdown';
 
 const SignUp = ({ navigation }) => {
@@ -7,17 +8,87 @@ const SignUp = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
 
-    const handleLogin = () => {
-        // Disabled jit credentials
-        if (role === 'disabled') {
-            navigation.navigate('StudentHome');
+    const validateInputs = () => {
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert("Invalid Email", "Please enter a valid email address");
+            return false;
         }
-        // Volunteer credentials
-        else if (role === 'volunteer') {
-            navigation.navigate('Training');
+
+        // Password validation
+        if (password.length < 6) {
+            Alert.alert("Invalid Password", "Password must be at least 6 characters long");
+            return false;
         }
+
+        // Role validation
+        if (!role) {
+            Alert.alert("Role Required", "Please select a role");
+            return false;
+        }
+
+        return true;
     };
 
+    const handleSignUp = async () => {
+        // Validate inputs first
+        if (!validateInputs()) {
+            return;
+        }
+
+        const usersFileUri = `${FileSystem.documentDirectory}users.json`;
+        let users = [];
+    
+        try {
+            // Check if the file exists
+            const fileInfo = await FileSystem.getInfoAsync(usersFileUri);
+            if (fileInfo.exists) {
+                // Read the file if it exists
+                const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
+                users = JSON.parse(usersFile);
+                
+                // Check for existing email
+                if (users.some(user => user.email === email)) {
+                    Alert.alert("Email Exists", "This email is already registered");
+                    return;
+                }
+            } else {
+                // Create the file with an empty array if it doesn't exist
+                await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify([]));
+            }
+        } catch (error) {
+            console.log('Error reading users file:', error);
+            Alert.alert("Error", "Unable to access users file.");
+            return;
+        }
+    
+        // Add the new user to the array
+        users.push({ email, password, role });
+    
+        try {
+            // Write the updated array back to the file
+            await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
+            Alert.alert(
+                "Sign Up Successful", 
+                "You can now log in.", 
+                [{ 
+                    text: "OK",
+                    onPress: () => navigation.reset({
+                        index: 1,
+                        routes: [
+                            { name: 'Land' },
+                            { name: 'Login' }
+                        ],
+                    })
+                }]
+            );
+        } catch (error) {
+            console.log('Error writing users file:', error);
+            Alert.alert("Sign Up Failed", "An error occurred. Please try again.");
+        }
+    };
+    
     const roleOptions = [
         { label: 'Disabled Student', value: 'disabled' },
         { label: 'Volunteer', value: 'volunteer' }
@@ -59,7 +130,7 @@ const SignUp = ({ navigation }) => {
 
             <TouchableOpacity
                 style={styles.button}
-                onPress={handleLogin}
+                onPress={handleSignUp}
             >
                 <Text style={styles.buttonText}>Submit</Text>
             </TouchableOpacity>
