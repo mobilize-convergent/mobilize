@@ -62,30 +62,30 @@ const SignUp = ({ navigation }) => {
             Alert.alert("Error", "Unable to access users file.");
             return;
         }
-    
-        // Add the new user to the array
-        users.push({ email, password, role });
-    
-        try {
-            // Write the updated array back to the file
-            await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
-            Alert.alert(
-                "Sign Up Successful", 
-                "You can now log in.", 
-                [{ 
-                    text: "OK",
-                    onPress: () => navigation.reset({
-                        index: 1,
-                        routes: [
-                            { name: 'Land' },
-                            { name: 'Login' }
-                        ],
-                    })
-                }]
-            );
-        } catch (error) {
-            console.log('Error writing users file:', error);
-            Alert.alert("Sign Up Failed", "An error occurred. Please try again.");
+
+        if (role === 'disabled') {
+            users.push({ email, password, role });
+            try {
+                await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
+                navigation.reset({
+                    index: 1,
+                    routes: [
+                        { name: 'Land' },
+                        { name: 'Login' }
+                    ],
+                })
+            } catch (error) {
+                console.log('Error writing users file:', error);
+                Alert.alert("Sign Up Failed", "An error occurred. Please try again.");
+            }
+        } else if (role === 'volunteer') {
+            navigation.navigate('Training', {
+                users, users,
+                usersFileUri, usersFileUri,
+                email: email,
+                password: password,
+                role: role,
+            });
         }
     };
     

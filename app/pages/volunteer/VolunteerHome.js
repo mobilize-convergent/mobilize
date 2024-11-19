@@ -1,17 +1,13 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet, BottomNavigation } from 'react-native';
 
 const VolunteerHome = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to the Accessibility App!</Text>
       <Text style={styles.description}>
-        This app helps UT Austin disabled students navigate the campus.
+        Volunteer View
       </Text>
-      <Button
-        title="Go to Map"
-        onPress={() => navigation.navigate('Map')}
-      />
     </View>
   );
 };

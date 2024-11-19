@@ -4,7 +4,7 @@ import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 const Landing = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>App Name</Text>
+      <Text style={styles.title}>NavUs</Text>
 
       <TouchableOpacity
         style={styles.button}
@@ -20,7 +20,6 @@ const Landing = ({ navigation }) => {
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
 
-      <Text style={styles.description}>Tag Line</Text>
     </View>
   );
 };
