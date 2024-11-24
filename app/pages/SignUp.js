@@ -37,6 +37,7 @@ const SignUp = ({ navigation }) => {
             return;
         }
 
+
         const usersFileUri = `${FileSystem.documentDirectory}users.json`;
         let users = [];
     
