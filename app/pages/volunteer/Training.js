@@ -1,17 +1,25 @@
+import * as FileSystem from 'expo-file-system';
 import React, { useState } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
-const Training = ({ navigation }) => {
-    const [text, setText] = useState('');
+const Training = ({ route, navigation }) => {
+    const { users, usersFileUri, email, password, role } = route.params;
 
-    const handleDoneTraining = () => {
-        navigation.reset({
-            index: 1,
-            routes: [
-                { name: 'Landing' },
-                { name: 'VolunteerHome' }
-            ],
-        });
+    const handleDoneTraining = async () => {
+        users.push({ email, password, role });
+        try {
+            await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
+            navigation.reset({
+                index: 1,
+                routes: [
+                    { name: 'Land' },
+                    { name: 'Login' }
+                ],
+            })
+        } catch (error) {
+            console.log('Error writing users file:', error);
+            Alert.alert("Sign Up Failed", "An error occurred. Please try again.");
+        }
     };
 
     return (

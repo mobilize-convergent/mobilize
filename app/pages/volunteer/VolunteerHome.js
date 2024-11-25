@@ -1,17 +1,193 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert, Animated } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';
 
-const VolunteerHome = ({ navigation }) => {
+const VolunteerHome = () => {
+  const [activeTab, setActiveTab] = useState('your-routes');
+  const [yourRoutes, setYourRoutes] = useState([
+    { id: '1', date: 'Mon, Nov 11 at 7:30 PM', from: 'GSB', to: 'WCP', student: 'Adam A.' },
+    { id: '2', date: 'Tue, Nov 12 at 6:00 AM', from: 'JES', to: 'EER', student: 'Aryan M.' },
+    { id: '3', date: 'Wed, Nov 13 at 8:45 PM', from: 'PCL', to: 'PMA', student: 'Tyler C.' },
+    { id: '4', date: 'Fri, Nov 15 at 8:30 AM', from: 'PCL', to: 'PMA', student: 'Amaya C.' },
+    { id: '5', date: 'Sat, Nov 16 at 10:30 AM', from: 'WEL', to: 'KIN', student: 'Chioma V.' }
+  ]);
+
+  const [availableRoutes, setAvailableRoutes] = useState([
+    { id: '6', date: 'Tue, Nov 12 at 4:45 PM', from: 'RLP', to: 'BEL', student: 'Jessica L.' },
+    { id: '7', date: 'Tue, Nov 12 at 8:30 PM', from: 'MAI', to: 'GDC', student: 'Reagan M.' },
+    { id: '8', date: 'Wed, Nov 13 at 9:45 AM', from: 'EER', to: 'JES', student: 'Zoe K.' },
+    { id: '9', date: 'Wed, Nov 13 at 11:00 AM', from: 'PCL', to: 'PMA', student: 'Steve R.' }
+  ]);
+
+  const handleDelete = (routeId) => {
+    Alert.alert(
+      "Unassign Route",
+      "Are you sure you want to unassign yourself from this route?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Yes, Unassign",
+          style: "destructive",
+          onPress: () => {
+            const routeToMove = yourRoutes.find(route => route.id === routeId);
+            if (routeToMove) {
+              const availableRoute = {
+                ...routeToMove,
+                student: routeToMove.student
+              };
+              setYourRoutes(current => 
+                current.filter(route => route.id !== routeId)
+              );
+              setAvailableRoutes(current => [...current, availableRoute]);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleAssign = (routeId) => {
+    Alert.alert(
+      "Assign Route",
+      "Are you sure you want to sign yourself up for this route?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Yes, Sign Up",
+          style: "default",
+          onPress: () => {
+            const routeToMove = availableRoutes.find(route => route.id === routeId);
+            if (routeToMove) {
+              const assignedRoute = {
+                ...routeToMove,
+                student: routeToMove.student
+              };
+              setAvailableRoutes(current => 
+                current.filter(route => route.id !== routeId)
+              );
+              setYourRoutes(current => [...current, assignedRoute]);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const renderRightActions = (progress, dragX, routeId) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [0, 100],
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={() => handleDelete(routeId)}
+      >
+        <Animated.View
+          style={[
+            styles.deleteActionContent,
+            {
+              transform: [{ translateX: trans }],
+            },
+          ]}
+        >
+          <MaterialIcons name="delete" size={24} color="white" />
+          <Text style={styles.deleteActionText}>Delete</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
+  const RouteCard = ({ route, isYourRoute }) => {
+    const card = (
+      <View style={styles.cardContent}>
+        <View style={styles.cardHeader}>
+          <View style={styles.dateContainer}>
+            <View style={styles.userIcon}>
+              <MaterialIcons name="person" size={20} color="white" />
+            </View>
+            <Text style={styles.dateText}>{route.date}</Text>
+          </View>
+          {isYourRoute && (
+            <TouchableOpacity>
+              <MaterialIcons name="edit" size={20} color="#666" />
+            </TouchableOpacity>
+          )}
+        </View>
+        
+        <View style={styles.routeDetails}>
+          <View style={styles.locationContainer}>
+            <Text style={styles.locationText}>{route.from} → {route.to}</Text>
+          </View>
+          <View style={styles.studentContainer}>
+            <MaterialIcons name="person" size={16} color="#666" />
+            <Text style={styles.studentText}>{route.student || 'Available'}</Text>
+          </View>
+        </View>
+
+        {!isYourRoute && (
+          <TouchableOpacity 
+            style={styles.availableButton}
+            onPress={() => handleAssign(route.id)}
+          >
+            <Text style={styles.availableButtonText}>Sign Up</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+
+    if (isYourRoute) {
+      return (
+        <Swipeable
+          renderRightActions={(progress, dragX) => 
+            renderRightActions(progress, dragX, route.id)
+          }
+          rightThreshold={40}
+        >
+          <View style={styles.card}>
+            {card}
+          </View>
+        </Swipeable>
+      );
+    }
+
+    return <View style={styles.card}>{card}</View>;
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to the Accessibility App!</Text>
-      <Text style={styles.description}>
-        This app helps UT Austin disabled students navigate the campus.
-      </Text>
-      <Button
-        title="Go to Map"
-        onPress={() => navigation.navigate('Map')}
-      />
+      <View style={styles.tabContainer}>
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'your-routes' && styles.activeTab]}
+          onPress={() => setActiveTab('your-routes')}
+        >
+          <Text style={styles.tabText}>Your Routes</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.tab, activeTab === 'available-routes' && styles.activeTab]}
+          onPress={() => setActiveTab('available-routes')}
+        >
+          <Text style={styles.tabText}>Available Routes</Text>
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView style={styles.routesList}>
+        {(activeTab === 'your-routes' ? yourRoutes : availableRoutes).map((route) => (
+          <RouteCard 
+            key={route.id} 
+            route={route} 
+            isYourRoute={activeTab === 'your-routes'} 
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 };
@@ -19,21 +195,125 @@ const VolunteerHome = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
+    backgroundColor: '#f5f5f5',
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    backgroundColor: '#e5e5e5',
+    borderRadius: 8,
+    padding: 4,
+    marginBottom: 16,
+  },
+  tab: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 6,
+  },
+  activeTab: {
+    backgroundColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  tabText: {
+    textAlign: 'center',
+  },
+  routesList: {
+    flex: 1,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  cardContent: {
+    padding: 16,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  dateContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  userIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#4ade80',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5'
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
+  dateText: {
+    fontSize: 14,
   },
-  description: {
-    fontSize: 16,
+  routeDetails: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  locationContainer: {
+    backgroundColor: '#f3f4f6',
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+  },
+  locationText: {
+    fontSize: 14,
+  },
+  studentContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  studentText: {
+    fontSize: 14,
+  },
+  availableButton: {
+    backgroundColor: '#4ade80',
+    borderRadius: 8,
+    paddingVertical: 8,
+    marginTop: 12,
+  },
+  availableButtonText: {
+    color: 'white',
     textAlign: 'center',
-    marginBottom: 40,
   },
+  deleteAction: {
+    backgroundColor: '#ff4444',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  deleteActionContent: {
+    flex: 1,
+    backgroundColor: '#ff4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  deleteActionText: {
+    color: 'white',
+    fontWeight: '600',
+    padding: 8,
+  }
 });
 
 export default VolunteerHome;

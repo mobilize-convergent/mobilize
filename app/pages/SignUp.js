@@ -8,11 +8,37 @@ const SignUp = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
 
+    const validateInputs = () => {
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            Alert.alert("Invalid Email", "Please enter a valid email address");
+            return false;
+        }
+
+        // Password validation
+        if (password.length < 6) {
+            Alert.alert("Invalid Password", "Password must be at least 6 characters long");
+            return false;
+        }
+
+        // Role validation
+        if (!role) {
+            Alert.alert("Role Required", "Please select a role");
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSignUp = async () => {
-        // Use FileSystem.documentDirectory for a writable file location
+        // Validate inputs first
+        if (!validateInputs()) {
+            return;
+        }
+
+
         const usersFileUri = `${FileSystem.documentDirectory}users.json`;
-        console.error("usersFileUri:"+usersFileUri);
-        console.log('File URI:', usersFileUri);
         let users = [];
     
         try {
@@ -22,7 +48,12 @@ const SignUp = ({ navigation }) => {
                 // Read the file if it exists
                 const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
                 users = JSON.parse(usersFile);
-                console.error("users: "+JSON.stringify(users));
+                
+                // Check for existing email
+                if (users.some(user => user.email === email)) {
+                    Alert.alert("Email Exists", "This email is already registered");
+                    return;
+                }
             } else {
                 // Create the file with an empty array if it doesn't exist
                 await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify([]));
@@ -32,22 +63,33 @@ const SignUp = ({ navigation }) => {
             Alert.alert("Error", "Unable to access users file.");
             return;
         }
-    
-        // Add the new user to the array
-        users.push({ email, password, role });
-    
-        try {
-            // Write the updated array back to the file
-            await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
-            Alert.alert("Sign Up Successful", "You can now log in.", [{ text: "OK" }]);
-            navigation.navigate('StudentHome');
-        } catch (error) {
-            console.log('Error writing users file:', error);
-            Alert.alert("Sign Up Failed", "An error occurred. Please try again.", [{ text: "OK" }]);
+
+        if (role === 'disabled') {
+            users.push({ email, password, role });
+            try {
+                await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
+                navigation.reset({
+                    index: 1,
+                    routes: [
+                        { name: 'Land' },
+                        { name: 'Login' }
+                    ],
+                })
+            } catch (error) {
+                console.log('Error writing users file:', error);
+                Alert.alert("Sign Up Failed", "An error occurred. Please try again.");
+            }
+        } else if (role === 'volunteer') {
+            navigation.navigate('Training', {
+                users, users,
+                usersFileUri, usersFileUri,
+                email: email,
+                password: password,
+                role: role,
+            });
         }
     };
     
-
     const roleOptions = [
         { label: 'Disabled Student', value: 'disabled' },
         { label: 'Volunteer', value: 'volunteer' }
