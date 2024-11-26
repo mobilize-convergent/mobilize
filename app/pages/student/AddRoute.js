@@ -1,15 +1,53 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Calendar = ({ navigation }) => {
+const AddRoute = ({ route, navigation }) => {
+  const { routes: existingRoutes = [] } = route.params || {}; // Fallback to an empty array if routes is undefined
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState('08:00');
-  const [endTime, setEndTime] = useState('09:00');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [timeSelectionType, setTimeSelectionType] = useState('start');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+
+  const handleAddRoute = async () => {
+    const formattedDate = selectedDate.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+  
+    const newRoute = {
+      date: formattedDate,
+      time: startTime,
+      route: 'place holder', // You might want to add an input for this
+      volunteer: 'Jeff J',
+      status: 'pending',
+    };
+  
+    // Merge existing routes with the new route
+    const updatedRoutes = [...(existingRoutes || []), newRoute];
+  
+    Alert.alert('Add Route', 'Are you sure you want to add this route?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes, Add Route',
+        onPress: () => {
+          console.log(JSON.stringify(updatedRoutes));
+          navigation.navigate('StudentTabs', {
+            screen: 'StudentHome',
+            params: { updatedRoutes },
+          });
+        },
+      },
+    ]);
+  };
+  
 
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
@@ -75,8 +113,6 @@ const Calendar = ({ navigation }) => {
   const handleTimeSelect = (time) => {
     if (timeSelectionType === 'start') {
       setStartTime(time);
-    } else {
-      setEndTime(time);
     }
     setDropdownVisible(false);
   };
@@ -111,13 +147,13 @@ const Calendar = ({ navigation }) => {
           {getDaysInMonth(currentMonth).map((week, weekIndex) => (
             <View key={weekIndex} style={styles.weekRow}>
               {week.map((dayObj, dayIndex) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   key={dayIndex}
                   style={[
                     styles.dateCell,
-                    dayObj?.currentMonth && 
-                    dayObj?.date === selectedDate.getDate() && 
-                    currentMonth.getMonth() === selectedDate.getMonth() && 
+                    dayObj?.currentMonth &&
+                    dayObj?.date === selectedDate.getDate() &&
+                    currentMonth.getMonth() === selectedDate.getMonth() &&
                     styles.selectedDate
                   ]}
                   onPress={() => {
@@ -131,9 +167,9 @@ const Calendar = ({ navigation }) => {
                   {dayObj && <Text style={[
                     styles.dateText,
                     !dayObj.currentMonth && styles.otherMonthDate,
-                    dayObj.currentMonth && 
-                    dayObj.date === selectedDate.getDate() && 
-                    currentMonth.getMonth() === selectedDate.getMonth() && 
+                    dayObj.currentMonth &&
+                    dayObj.date === selectedDate.getDate() &&
+                    currentMonth.getMonth() === selectedDate.getMonth() &&
                     styles.selectedDateText
                   ]}>
                     {dayObj.date}
@@ -146,22 +182,12 @@ const Calendar = ({ navigation }) => {
 
         <View style={styles.timeSection}>
           <View style={styles.timeField}>
-            <Text style={styles.timeLabel}>Starts:</Text>
-            <TouchableOpacity 
-              style={styles.timeInput} 
+            <Text style={styles.timeLabel}>Time:</Text>
+            <TouchableOpacity
+              style={styles.timeInput}
               onPress={(e) => handleTimeClick('start', e)}
             >
               <Text style={styles.timeText}>{startTime}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.timeField}>
-            <Text style={styles.timeLabel}>Ends:</Text>
-            <TouchableOpacity 
-              style={styles.timeInput} 
-              onPress={(e) => handleTimeClick('end', e)}
-            >
-              <Text style={styles.timeText}>{endTime}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -170,8 +196,8 @@ const Calendar = ({ navigation }) => {
           <View style={[styles.dropdown, { top: dropdownPosition.top + 40, left: dropdownPosition.left - 100 }]}>
             <ScrollView style={styles.timeDropdown}>
               {generateTimeOptions().map(time => (
-                <TouchableOpacity 
-                  key={time} 
+                <TouchableOpacity
+                  key={time}
                   style={styles.timeOption}
                   onPress={() => handleTimeSelect(time)}
                 >
@@ -183,100 +209,22 @@ const Calendar = ({ navigation }) => {
         )}
 
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => navigation.goBack()}
           >
             <Text style={styles.buttonText}>Delete</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.continueButton}
-            onPress={() => navigation.navigate('RouteDetails', {
-              date: selectedDate,
-              startTime,
-              endTime
-            })}
+            onPress={handleAddRoute}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
-  );
-};
-
-// Route Details Screen
-const RouteDetails = ({ route, navigation }) => {
-  const { date, startTime } = route.params;
-  
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Routes</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.formContainer}>
-        <View style={styles.dateHeader}>
-          <Text style={styles.dateTitle}>
-            {date.toLocaleDateString('en-US', { 
-              month: 'long', 
-              day: 'numeric' 
-            })},
-          </Text>
-          <Text style={styles.dateTitle}>{startTime}</Text>
-          <Icon name="event" size={24} color="#1a73e8" />
-        </View>
-
-        <View style={styles.formField}>
-          <Text style={styles.label}>To:</Text>
-          <TextInput 
-            style={styles.input}
-            placeholder="Enter destination"
-          />
-        </View>
-
-        <View style={styles.formField}>
-          <Text style={styles.label}>From:</Text>
-          <TextInput 
-            style={styles.input}
-            placeholder="Enter starting point"
-          />
-        </View>
-
-        <View style={styles.formField}>
-          <Text style={styles.label}>Description / Instructions:</Text>
-          <TextInput 
-            style={[styles.input, styles.textArea]}
-            multiline
-            numberOfLines={4}
-            placeholder="Enter any additional details"
-          />
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={styles.deleteButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.continueButton}
-            onPress={() => {
-              // Save the route and navigate back to home
-              navigation.navigate('StudentHome');
-            }}
-          >
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+    </View >
   );
 };
 
@@ -417,4 +365,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { Calendar, RouteDetails };
+export { AddRoute };

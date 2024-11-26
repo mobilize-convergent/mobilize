@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
-const Profile = () => {
+
+const Profile = ({ navigation }) => {
   return (
     <View style={styles.container}>
       {/* Profile Info */}
@@ -18,29 +19,33 @@ const Profile = () => {
       {/* Options List */}
       <ScrollView>
         <TouchableOpacity style={styles.optionItem}>
-          <Text>:round_pushpin: Location</Text>
-          <Text>:arrow_right:</Text>
+          <Text>📍 Location</Text>
+          <Text>➡️</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionItem}>
-          <Text>:globe_with_meridians: Languages</Text>
-          <Text>:arrow_right:</Text>
+          <Text>🌐 Languages</Text>
+          <Text>➡️</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionItem}>
-          <Text>:hourglass_flowing_sand: Clear History</Text>
-          <Text>:arrow_right:</Text>
+          <Text>⏳ Clear History</Text>
+          <Text>➡️</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.optionItem}>
-          <Text>:question: Help</Text>
-          <Text>:arrow_right:</Text>
+          <Text>❓ Help</Text>
+          <Text>➡️</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionItem}>
-          <Text>:unlock: Log Out</Text>
-          <Text>:arrow_right:</Text>
+        <TouchableOpacity 
+          style={styles.optionItem}
+          onPress={() => navigation.navigate("Land")}
+        >
+          <Text>🔓 Log Out</Text>
+          <Text>➡️</Text>
         </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -108,4 +113,5 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
 });
+
 export default Profile;

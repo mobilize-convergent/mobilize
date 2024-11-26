@@ -13,7 +13,7 @@ import Messages from './pages/messages/Messages';
 import Conversation from './pages/messages/Conversation';
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
-import { Calendar, RouteDetails } from './pages/student/AddRoute';
+import { AddRoute } from './pages/student/AddRoute';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -53,8 +53,7 @@ export default function Index() {
         <Stack.Screen name="Training" component={Training} />
         <Stack.Screen name="Conversation" component={Conversation} />
         <Stack.Screen name="ProfileEdit" component={ProfileEdit} />
-        <Stack.Screen name="Calendar" component={Calendar} />
-        <Stack.Screen name="RouteDetails" component={RouteDetails} />
+        <Stack.Screen name="AddRoute" component={AddRoute} />
 
       </Stack.Navigator>
     </NavigationContainer>

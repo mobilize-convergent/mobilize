@@ -81,11 +81,11 @@ const SignUp = ({ navigation }) => {
             }
         } else if (role === 'volunteer') {
             navigation.navigate('Training', {
-                users, users,
-                usersFileUri, usersFileUri,
-                email: email,
-                password: password,
-                role: role,
+                users,
+                usersFileUri,
+                email,
+                password,
+                role,
             });
         }
     };
