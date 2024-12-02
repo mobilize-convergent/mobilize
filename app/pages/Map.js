@@ -72,6 +72,38 @@ const MapScreen = () => {
   const [filteredBuildings, setFilteredBuildings] = useState([]);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
 
+  // Define the boundaries of the UT Austin area
+  const UTAreaBoundaries = {
+    latitude: 30.2848,
+    longitude: -97.7355,
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.015,
+  };
+
+  const initialRegion = UTAreaBoundaries;
+
+  // New function to check if the map is within the desired area
+  const isRegionWithinBounds = (region) => {
+    const withinLatitude = 
+      region.latitude >= UTAreaBoundaries.latitude - 0.05 &&
+      region.latitude <= UTAreaBoundaries.latitude + 0.05;
+    
+    const withinLongitude = 
+      region.longitude >= UTAreaBoundaries.longitude - 0.05 &&
+      region.longitude <= UTAreaBoundaries.longitude + 0.05;
+    
+    return withinLatitude && withinLongitude;
+  };
+
+    // New handler for region change
+    const handleRegionChangeComplete = useCallback((region) => {
+      if (!isRegionWithinBounds(region)) {
+        // If scrolled too far, animate back to initial region
+        mapRef.current?.animateToRegion(UTAreaBoundaries, 1000);
+      }
+    }, []);
+
+
   // Enhanced buildings array with searchable aliases
   const buildings = [
     {
@@ -166,12 +198,12 @@ const MapScreen = () => {
     },
   ];
 
-  const initialRegion = {
-    latitude: 30.2848,
-    longitude: -97.7355,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.015,
-  };
+  // const initialRegion = {
+  //   latitude: 30.2848,
+  //   longitude: -97.7355,
+  //   latitudeDelta: 0.015,
+  //   longitudeDelta: 0.015,
+  // };
 
   // Enhanced search function to check aliases
   const searchBuilding = (query, building) => {
@@ -280,6 +312,7 @@ const MapScreen = () => {
         minZoomLevel={13}
         maxZoomLevel={20}
         onPress={handleMapPress}
+        onRegionChangeComplete={handleRegionChangeComplete}
       >
         {renderMarkers}
       </MapView>
