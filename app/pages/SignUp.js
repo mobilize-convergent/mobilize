@@ -37,6 +37,7 @@ const SignUp = ({ navigation }) => {
             return;
         }
 
+
         const usersFileUri = `${FileSystem.documentDirectory}users.json`;
         let users = [];
     
@@ -80,11 +81,11 @@ const SignUp = ({ navigation }) => {
             }
         } else if (role === 'volunteer') {
             navigation.navigate('Training', {
-                users, users,
-                usersFileUri, usersFileUri,
-                email: email,
-                password: password,
-                role: role,
+                users,
+                usersFileUri,
+                email,
+                password,
+                role,
             });
         }
     };

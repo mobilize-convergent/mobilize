@@ -1,19 +1,17 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const RouteCard = ({ date, time, route, volunteer, status }) => (
+const RouteCard = ({ date, time, route, volunteer, status, navigation }) => (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
+
       <View style={styles.headerLeft}>
         <View style={[styles.userIcon, { backgroundColor: volunteer ? '#4CAF50' : '#FF5252' }]}>
           <Icon name="person" size={20} color="white" />
         </View>
         <Text style={styles.dateTime}>{date} at {time}</Text>
       </View>
-      <TouchableOpacity>
-        <Icon name="edit" size={20} color="#666" />
-      </TouchableOpacity>
     </View>
 
     <View style={styles.routeInfo}>
@@ -36,30 +34,45 @@ const RouteCard = ({ date, time, route, volunteer, status }) => (
   </View>
 );
 
-const StudentHome = ({ navigation }) => {
-  const routes = [
+const StudentHome = ({ navigation, route }) => {
+  const [routes, setRoutes] = useState([
     {
       date: 'Mon, Oct 14',
       time: '7:00 PM',
       route: 'GSB → WCP',
       volunteer: 'Adam A.',
-      status: 'confirmed'
+      status: 'confirmed',
     },
     {
       date: 'Tue, Oct 15',
       time: '2:00 PM',
       route: 'EER → GDC',
       volunteer: null,
-      status: 'pending'
+      status: 'pending',
     },
     {
       date: 'Tue, Oct 15',
       time: '3:45 PM',
       route: 'GDC → JES',
       volunteer: null,
-      status: 'pending'
+      status: 'pending',
     }
-  ];
+  ]);
+
+  useEffect(() => {
+    const addRoute = navigation.addListener('focus', () => {
+      console.log('StudentHome focused');
+      const updatedRoutes = route.params;
+      console.log('Updated routes:', updatedRoutes);
+
+      if (updatedRoutes) {
+        console.log('Updated routes:', updatedRoutes);
+        setRoutes([...routes, ...updatedRoutes]);
+      }
+    });
+
+    return addRoute;
+  }, [navigation, route, routes]);
 
   return (
     <View style={styles.container}>
@@ -67,9 +80,7 @@ const StudentHome = ({ navigation }) => {
         <Text style={styles.headerTitle}>Your Routes</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('Calendar', {
-            routes: routes
-          })}
+          onPress={() => navigation.navigate('AddRoute', { routes })}
         >
           <Icon name="add" size={24} color="#000" />
         </TouchableOpacity>
@@ -84,6 +95,7 @@ const StudentHome = ({ navigation }) => {
             route={route.route}
             volunteer={route.volunteer}
             status={route.status}
+            navigation={navigation}
           />
         ))}
       </ScrollView>

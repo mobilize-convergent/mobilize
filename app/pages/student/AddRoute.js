@@ -1,27 +1,120 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-// Calendar Screen
-const Calendar = ({ navigation }) => {
-  const [selectedDate, setSelectedDate] = useState(new Date(2024, 5, 26)); // June 26, 2024
-  const [startTime, setStartTime] = useState('8:00 AM');
-  const [endTime, setEndTime] = useState('8:00 AM');
+const AddRoute = ({ route, navigation }) => {
+  const { routes: existingRoutes = [] } = route.params || {}; // Fallback to an empty array if routes is undefined
+
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [startTime, setStartTime] = useState('08:00');
+  const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
+  const [timeSelectionType, setTimeSelectionType] = useState('start');
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
+
+  const handleAddRoute = async () => {
+    const formattedDate = selectedDate.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+  
+    const newRoute = {
+      date: formattedDate,
+      time: startTime,
+      route: 'place holder', // You might want to add an input for this
+      volunteer: 'Jeff J',
+      status: 'pending',
+    };
+  
+    // Merge existing routes with the new route
+    const updatedRoutes = [...(existingRoutes || []), newRoute];
+  
+    Alert.alert('Add Route', 'Are you sure you want to add this route?', [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Yes, Add Route',
+        onPress: () => {
+          console.log(JSON.stringify(updatedRoutes));
+          navigation.navigate('StudentTabs', {
+            screen: 'StudentHome',
+            params: { updatedRoutes },
+          });
+        },
+      },
+    ]);
+  };
+  
 
   const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
-  const currentMonth = new Date(2024, 5);
-  
-  // Generate calendar dates
-  const getDaysInMonth = () => {
-    const daysInMonth = new Array(35).fill(null);
-    const firstDay = new Date(2024, 5, 1).getDay();
-    const lastDate = new Date(2024, 5 + 1, 0).getDate();
-    
+
+  const getDaysInMonth = (date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const lastDate = new Date(year, month + 1, 0).getDate();
+
+    const daysInMonth = new Array(42).fill(null);
+
+    // Fill current month's dates
     for (let i = 0; i < lastDate; i++) {
-      daysInMonth[i + firstDay] = i + 1;
+      daysInMonth[firstDay + i] = {
+        date: i + 1,
+        currentMonth: true
+      };
     }
-    
-    return daysInMonth;
+
+    // Fill previous month's dates
+    const prevMonthLastDate = new Date(year, month, 0).getDate();
+    for (let i = 0; i < firstDay; i++) {
+      daysInMonth[i] = {
+        date: prevMonthLastDate - firstDay + i + 1,
+        currentMonth: false
+      };
+    }
+
+    // Ensure the calendar has only 7 days in a row
+    const weeks = [];
+    for (let i = 0; i < daysInMonth.length; i += 7) {
+      weeks.push(daysInMonth.slice(i, i + 7));
+    }
+
+    return weeks;
+  };
+
+  const changeMonth = (increment) => {
+    const newMonth = new Date(currentMonth);
+    newMonth.setMonth(currentMonth.getMonth() + increment);
+    setCurrentMonth(newMonth);
+  };
+
+  const generateTimeOptions = () => {
+    const times = [];
+    for (let hour = 0; hour < 24; hour++) {
+      for (let minute of ['00', '30']) {
+        times.push(`${hour.toString().padStart(2, '0')}:${minute}`);
+      }
+    }
+    return times;
+  };
+
+  const handleTimeClick = (type, event) => {
+    setTimeSelectionType(type);
+    setDropdownPosition({
+      top: event.nativeEvent.pageY,
+      left: event.nativeEvent.pageX
+    });
+    setDropdownVisible(true);
+  };
+
+  const handleTimeSelect = (time) => {
+    if (timeSelectionType === 'start') {
+      setStartTime(time);
+    }
+    setDropdownVisible(false);
   };
 
   return (
@@ -29,12 +122,14 @@ const Calendar = ({ navigation }) => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Your Routes</Text>
         <View style={styles.monthSelector}>
-          <Text style={styles.monthText}>June 2024</Text>
+          <Text style={styles.monthText}>
+            {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+          </Text>
           <View style={styles.monthControls}>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => changeMonth(-1)}>
               <Icon name="chevron-left" size={24} color="#1a73e8" />
             </TouchableOpacity>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => changeMonth(1)}>
               <Icon name="chevron-right" size={24} color="#1a73e8" />
             </TouchableOpacity>
           </View>
@@ -47,136 +142,89 @@ const Calendar = ({ navigation }) => {
             <Text key={index} style={styles.weekDay}>{day}</Text>
           ))}
         </View>
-        
+
         <View style={styles.dates}>
-          {getDaysInMonth().map((day, index) => (
-            <TouchableOpacity 
-              key={index}
-              style={[
-                styles.dateCell,
-                day === 26 && styles.selectedDate
-              ]}
-              onPress={() => setSelectedDate(new Date(2024, 5, day))}
-            >
-              {day && <Text style={[
-                styles.dateText,
-                day === 26 && styles.selectedDateText
-              ]}>{day}</Text>}
-            </TouchableOpacity>
+          {getDaysInMonth(currentMonth).map((week, weekIndex) => (
+            <View key={weekIndex} style={styles.weekRow}>
+              {week.map((dayObj, dayIndex) => (
+                <TouchableOpacity
+                  key={dayIndex}
+                  style={[
+                    styles.dateCell,
+                    dayObj?.currentMonth &&
+                    dayObj?.date === selectedDate.getDate() &&
+                    currentMonth.getMonth() === selectedDate.getMonth() &&
+                    styles.selectedDate
+                  ]}
+                  onPress={() => {
+                    if (dayObj?.currentMonth) {
+                      const newDate = new Date(currentMonth);
+                      newDate.setDate(dayObj.date);
+                      setSelectedDate(newDate);
+                    }
+                  }}
+                >
+                  {dayObj && <Text style={[
+                    styles.dateText,
+                    !dayObj.currentMonth && styles.otherMonthDate,
+                    dayObj.currentMonth &&
+                    dayObj.date === selectedDate.getDate() &&
+                    currentMonth.getMonth() === selectedDate.getMonth() &&
+                    styles.selectedDateText
+                  ]}>
+                    {dayObj.date}
+                  </Text>}
+                </TouchableOpacity>
+              ))}
+            </View>
           ))}
         </View>
 
         <View style={styles.timeSection}>
           <View style={styles.timeField}>
-            <Text style={styles.timeLabel}>Starts:</Text>
-            <View style={styles.timeInput}>
+            <Text style={styles.timeLabel}>Time:</Text>
+            <TouchableOpacity
+              style={styles.timeInput}
+              onPress={(e) => handleTimeClick('start', e)}
+            >
               <Text style={styles.timeText}>{startTime}</Text>
-            </View>
-          </View>
-          
-          <View style={styles.timeField}>
-            <Text style={styles.timeLabel}>Ends:</Text>
-            <View style={styles.timeInput}>
-              <Text style={styles.timeText}>{endTime}</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
+        {isDropdownVisible && (
+          <View style={[styles.dropdown, { top: dropdownPosition.top + 40, left: dropdownPosition.left - 100 }]}>
+            <ScrollView style={styles.timeDropdown}>
+              {generateTimeOptions().map(time => (
+                <TouchableOpacity
+                  key={time}
+                  style={styles.timeOption}
+                  onPress={() => handleTimeSelect(time)}
+                >
+                  <Text>{time}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+
         <View style={styles.buttonContainer}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.deleteButton}
             onPress={() => navigation.goBack()}
           >
             <Text style={styles.buttonText}>Delete</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.continueButton}
-            onPress={() => navigation.navigate('RouteDetails', {
-              date: selectedDate,
-              startTime,
-              endTime
-            })}
+            onPress={handleAddRoute}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
-  );
-};
-
-// Route Details Screen
-const RouteDetails = ({ route, navigation }) => {
-  const { date, startTime } = route.params;
-  
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Routes</Text>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon name="arrow-back" size={24} color="#000" />
-        </TouchableOpacity>
-      </View>
-
-      <View style={styles.formContainer}>
-        <View style={styles.dateHeader}>
-          <Text style={styles.dateTitle}>
-            {date.toLocaleDateString('en-US', { 
-              month: 'long', 
-              day: 'numeric' 
-            })},
-          </Text>
-          <Text style={styles.dateTitle}>{startTime}</Text>
-          <Icon name="event" size={24} color="#1a73e8" />
-        </View>
-
-        <View style={styles.formField}>
-          <Text style={styles.label}>To:</Text>
-          <TextInput 
-            style={styles.input}
-            placeholder="Enter destination"
-          />
-        </View>
-
-        <View style={styles.formField}>
-          <Text style={styles.label}>From:</Text>
-          <TextInput 
-            style={styles.input}
-            placeholder="Enter starting point"
-          />
-        </View>
-
-        <View style={styles.formField}>
-          <Text style={styles.label}>Description / Instructions:</Text>
-          <TextInput 
-            style={[styles.input, styles.textArea]}
-            multiline
-            numberOfLines={4}
-            placeholder="Enter any additional details"
-          />
-        </View>
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={styles.deleteButton}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.buttonText}>Delete</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.continueButton}
-            onPress={() => {
-              // Save the route and navigate back to home
-              navigation.navigate('StudentHome');
-            }}
-          >
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+    </View >
   );
 };
 
@@ -228,11 +276,14 @@ const styles = StyleSheet.create({
   weekDay: {
     width: 40,
     textAlign: 'center',
-    color: '#666',
+    fontWeight: 'bold',
+    color: '#555',
   },
   dates: {
+    marginBottom: 16,
+  },
+  weekRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     justifyContent: 'space-around',
   },
   dateCell: {
@@ -240,98 +291,78 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 4,
+  },
+  dateText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  otherMonthDate: {
+    color: '#bbb',
   },
   selectedDate: {
     backgroundColor: '#1a73e8',
-    borderRadius: 20,
-  },
-  dateText: {
-    color: '#000',
+    borderRadius: 50,
   },
   selectedDateText: {
     color: 'white',
   },
   timeSection: {
-    marginTop: 24,
+    marginBottom: 24,
   },
   timeField: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
+    marginBottom: 12,
   },
   timeLabel: {
-    width: 60,
-    color: '#1a73e8',
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 4,
   },
   timeInput: {
+    padding: 12,
     backgroundColor: '#f5f5f5',
-    padding: 8,
-    borderRadius: 4,
-    flex: 1,
+    borderRadius: 8,
   },
   timeText: {
-    color: '#000',
+    fontSize: 16,
+    color: '#333',
+  },
+  timeDropdown: {
+    width: 200,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    elevation: 3,
+    maxHeight: 200,
+  },
+  timeOption: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  dropdown: {
+    position: 'absolute',
+    zIndex: 1000,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 24,
   },
   deleteButton: {
-    backgroundColor: '#dc3545',
-    padding: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    backgroundColor: '#FF5252',
     borderRadius: 8,
-    width: '45%',
-    alignItems: 'center',
   },
   continueButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     backgroundColor: '#4CAF50',
-    padding: 12,
     borderRadius: 8,
-    width: '45%',
-    alignItems: 'center',
   },
   buttonText: {
+    fontSize: 16,
+    fontWeight: '500',
     color: 'white',
-    fontWeight: '500',
-  },
-  formContainer: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    elevation: 2,
-  },
-  dateHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 24,
-  },
-  dateTitle: {
-    fontSize: 20,
-    fontWeight: '500',
-    marginRight: 8,
-  },
-  formField: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    color: '#000',
-    marginBottom: 8,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#1a73e8',
-    borderRadius: 8,
-    padding: 12,
-    fontSize: 16,
-  },
-  textArea: {
-    height: 100,
-    textAlignVertical: 'top',
   },
 });
 
-export { Calendar, RouteDetails };
+export { AddRoute };

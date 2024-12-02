@@ -1,15 +1,22 @@
 import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
+import { Ionicons, MaterialIcons, FontAwesome, Entypo } from "@expo/vector-icons";
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   return (
-  
     <View style={styles.container}>
-   
+      {/* Header */}
+      <View style={styles.header}>
+        <Ionicons name="settings-outline" size={24} color="transparent" />
+        <Text style={styles.title}>My Profile</Text>
+        <Ionicons name="settings-outline" size={24} color="black" />
+      </View>
+
+     
 
       {/* Profile Info */}
       <View style={styles.profileInfo}>
-        <View style={styles.profilePicture} />
+        <Image source={require('../../images/person.png')} style={styles.profilePicture} />
         <View style={styles.userInfo}>
           <Text style={styles.name}>Jake M.</Text>
           <Text style={styles.email}>jakem12@gmail.com</Text>
@@ -19,32 +26,45 @@ const Profile = () => {
         </View>
       </View>
 
-      <View style={styles.divider} />
-
+<View style={styles.imageContainer}>
+  <View style={styles.line} />
+  <Image source={require('images/stars.png')} style={styles.stars} />
+  <View style={styles.line} />
+</View>
+    
       {/* Options List */}
       <ScrollView>
         <TouchableOpacity style={styles.optionItem}>
-          <Text>📍 Location</Text>
-          <Text>➡️</Text>
+          <Ionicons name="location-outline" size={20} color="#000" />
+          <Text style={styles.optionText}>Location</Text>
+          <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.optionItem}>
-          <Text>🌐 Languages</Text>
-          <Text>➡️</Text>
+          <MaterialIcons name="language" size={20} color="#000" />
+          <Text style={styles.optionText}>Languages</Text>
+          <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.optionItem}>
-          <Text>⏳ Clear History</Text>
-          <Text>➡️</Text>
+          <Ionicons name="time-outline" size={20} color="#000" />
+          <Text style={styles.optionText}>Clear History</Text>
+          <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
+
         <TouchableOpacity style={styles.optionItem}>
-          <Text>❓ Help</Text>
-          <Text>➡️</Text>
+          <FontAwesome name="question-circle-o" size={20} color="#000" />
+          <Text style={styles.optionText}>Help</Text>
+          <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionItem}>
-          <Text>🔓 Log Out</Text>
-          <Text>➡️</Text>
+
+        <TouchableOpacity style={styles.optionItem} onPress={() => navigation.navigate("Land")}>
+          <Ionicons name="log-out-outline" size={20} color="#000" />
+          <Text style={styles.optionText}>Log Out</Text>
+          <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
       </ScrollView>
- 
+
     </View>
   );
 };
@@ -52,32 +72,49 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f9f9f9",
-    paddingHorizontal: 16,
+    backgroundColor: "white",
+  },
+  header: {
+    flexDirection: "row",
     justifyContent: "space-between",
-    padding: 60,
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    paddingBottom: 20,
+    backgroundColor: "#F6F6F6",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
   },
-  settingsButton: {
-    fontSize: 18,
+  imageContainer: {
+    alignItems: 'center',
+    marginHorizontal: 20, 
+    padding: 10,
   },
+  stars: {
+    resizeMode: 'contain',
+  },
+  line: {
+    width: '90%',
+    height: 2, 
+    backgroundColor: '#ccc', 
+    marginVertical: 10,
+  },
+
   profileInfo: {
     flexDirection: "row",
     alignItems: "center",
+    paddingHorizontal: 16,
     marginTop: 16,
   },
   profilePicture: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     borderRadius: 40,
-    backgroundColor: "#ccc",
-    marginRight: 16,
   },
   userInfo: {
-    flex: 1,
+    marginLeft: 16,
   },
   name: {
     fontSize: 20,
@@ -89,31 +126,31 @@ const styles = StyleSheet.create({
     marginVertical: 4,
   },
   editButton: {
+    backgroundColor: "#174864",
     paddingVertical: 8,
-    borderRadius: 4,
+    borderRadius: 20,
+    marginTop: 8,
+    paddingHorizontal: 6,
+    flexShrink: 1,
+    // width: 100, other option - smaller button
   },
   editButtonText: {
-    fontSize: 14,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: "#ccc",
-    marginVertical: 16,
+    fontSize: 12,
+    color: "#fff",
+    textAlign: "center",
   },
   optionItem: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingVertical: 30,
+    alignItems: "center",
+    paddingHorizontal: 16,
+    paddingVertical: 20,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
   },
-  navbar: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingVertical: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#ccc",
-    backgroundColor: "#fff",
+  optionText: {
+    flex: 1,
+    marginLeft: 12,
+    fontSize: 16,
   },
 });
 
