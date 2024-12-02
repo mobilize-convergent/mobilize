@@ -6,7 +6,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import VolunteerHome from './pages/volunteer/VolunteerHome';
-import StudentHome from './pages/student/StudentHome';
+import { StudentHome } from './pages/student/StudentHome';
 import Training from './pages/volunteer/Training';
 import Map from './pages/Map';
 import Messages from './pages/messages/Messages';
