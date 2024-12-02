@@ -13,6 +13,8 @@ import {
   View
 } from 'react-native';
 import MapView, { Callout, Marker } from 'react-native-maps';
+
+// CustomMarker Component (unchanged)
 const CustomMarker = React.memo(({ title, isSelected }) => (
   <View style={[styles.customMarker, { zIndex: isSelected ? 1 : 0 }]}>
     <View style={[styles.markerPin, isSelected && styles.selectedMarkerPin]}>
@@ -25,38 +27,52 @@ const CustomMarker = React.memo(({ title, isSelected }) => (
     </View>
   </View>
 ));
+
+// CustomCallout Component (unchanged)
 const CustomCallout = React.memo(({ title, description, accessibility }) => (
   <View style={styles.calloutWrapper}>
     <BlurView intensity={40} tint="dark" style={styles.calloutContainer}>
       <View style={styles.calloutContent}>
         <View style={styles.calloutHeader}>
-          <Feather name="map-pin" size={16} color="#BF5700" style={styles.calloutIcon} />
+          <View style={styles.calloutIconContainer}>
+            <Feather name="map-pin" size={18} color="#BF5700" />
+          </View>
           <View style={styles.calloutTextContainer}>
             <Text style={styles.calloutTitle} numberOfLines={2}>
               {title}
             </Text>
-            <Text style={styles.calloutDescription} numberOfLines={2}>
-              {description}
-            </Text>
-            <View style={styles.accessibilityContainer}>
-              <Feather name="info" size={12} color="#BF5700" style={styles.accessibilityIcon} />
-              <Text style={styles.calloutAccessibility}>
-                {accessibility}
+            {description && (
+              <Text style={styles.calloutDescription} numberOfLines={3}>
+                {description}
               </Text>
-            </View>
+            )}
           </View>
         </View>
+        {accessibility && (
+          <View style={styles.accessibilityContainer}>
+            <View style={styles.accessibilityIconContainer}>
+              <Feather name="info" size={14} color="#BF5700" />
+            </View>
+            <Text style={styles.calloutAccessibility} numberOfLines={2}>
+              {accessibility}
+            </Text>
+          </View>
+        )}
       </View>
     </BlurView>
     <View style={styles.calloutArrow} />
   </View>
 ));
+
+// MapScreen Component
 const MapScreen = () => {
   const mapRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [filteredBuildings, setFilteredBuildings] = useState([]);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
+
+  // Enhanced buildings array with searchable aliases
   const buildings = [
     {
       id: '1',
@@ -64,7 +80,8 @@ const MapScreen = () => {
       description: "Modern study spaces and labs",
       latitude: 30.2881,
       longitude: -97.7355,
-      accessibility: "Accessible building with ramps and elevators",
+      accessibility: "Ramps are narrow and may be difficult to navigate with larger wheelchairs",
+      aliases: ["EERC", "Engineering Center", "Research Center"]
     },
     {
       id: '2',
@@ -72,7 +89,8 @@ const MapScreen = () => {
       description: "Quiet study environment with resources",
       latitude: 30.2827,
       longitude: -97.7382,
-      accessibility: "Accessible building with ramps and elevators",
+      accessibility: "Elevators often have delayed service times",
+      aliases: ["PCL", "Perry Castaneda Library", "Perry Library"]
     },
     {
       id: '3',
@@ -80,22 +98,107 @@ const MapScreen = () => {
       description: "Fitness and wellness facility",
       latitude: 30.2815,
       longitude: -97.7328,
-      accessibility: "Accessible building with ramps and elevators",
+      accessibility: "Disabled doors don't work on the 2nd floor",
+      aliases: ["RecSports", "Recreation Center", "Sports Center"]
+    },
+    {
+      id: '4',
+      title: "Dobie Center",
+      description: "Residence Hall",
+      latitude: 30.2832,
+      longitude: -97.7414,
+      accessibility: "Building is up to disability standards",
+      aliases: ["Dobie", "DC", "Dobie Twenty21", "Twenty21"]
+    },
+    {
+      id: '5',
+      title: "Student Activity Center",
+      description: "Hub for student events and dining",
+      latitude: 30.2849,
+      longitude: -97.7367,
+      accessibility: "Disabled bathrooms on the 2nd floor are not up to standard",
+      aliases: ["SAC", "Student Center", "Activity Center"]
+    },
+    {
+      id: '6',
+      title: "Gates Dell Complex",
+      description: "Computer Science building with advanced labs",
+      latitude: 30.2863,
+      longitude: -97.7366,
+      accessibility: "Building is up to disability standards",
+      aliases: ["GDC", "Gates Complex", "Dell Complex"]
+    },
+    {
+      id: '7',
+      title: "Clock Tower",
+      description: "Iconic building with administrative offices",
+      latitude: 30.2862,
+      longitude: -97.7394,
+      accessibility: "Accessible building, but ramps need maintenance",
+      aliases: ["Tower", "Main Building", "UT Tower", "Main Tower"]
+    },
+    {
+      id: '8',
+      title: "Jester West",
+      description: "Residence hall and dining area",
+      latitude: 30.2817,
+      longitude: -97.7368,
+      accessibility: "5th floor disabled bathrooms are not up to date",
+      aliases: ["Jester", "Jester Dorm", "Jester Hall", "JW"]
+    },
+    {
+      id: '9',
+      title: "Blanton Museum of Art",
+      description: "Art museum with modern and historical exhibits",
+      latitude: 30.2808,
+      longitude: -97.7373,
+      accessibility: "Wheelchair access on the south side only",
+      aliases: ["Blanton", "Art Museum", "Blanton Museum"]
+    },
+    {
+      id: '10',
+      title: "Biomedical Engineering Building",
+      description: "State-of-the-art biomedical labs",
+      latitude: 30.2893,
+      longitude: -97.7387,
+      accessibility: "Elevator is out of service intermittently",
+      aliases: ["BME", "Biomedical Building", "Biomedical Labs"]
     },
   ];
+
   const initialRegion = {
     latitude: 30.2848,
     longitude: -97.7355,
     latitudeDelta: 0.015,
     longitudeDelta: 0.015,
   };
+
+  // Enhanced search function to check aliases
+  const searchBuilding = (query, building) => {
+    const normalizedQuery = query.toLowerCase().trim();
+    const searchTargets = [
+      building.title.toLowerCase(),
+      ...(building.aliases || []).map(alias => alias.toLowerCase())
+    ];
+    
+    return searchTargets.some(target => target.includes(normalizedQuery));
+  };
+
+  // Handle building selection (unchanged)
   const handleBuildingSelect = useCallback((building) => {
     Keyboard.dismiss();
     setSearchQuery(building.title);
     setFilteredBuildings([]);
     setIsSearchFocused(false);
-    setSelectedBuilding(building);
-    // Use requestAnimationFrame to ensure smooth animation
+    
+    // If clicking the same building, deselect it
+    if (selectedBuilding?.id === building.id) {
+      setSelectedBuilding(null);
+    } else {
+      setSelectedBuilding(building);
+    }
+
+    // Smooth animation to selected building
     requestAnimationFrame(() => {
       mapRef.current?.animateToRegion({
         latitude: building.latitude,
@@ -104,24 +207,38 @@ const MapScreen = () => {
         longitudeDelta: 0.005,
       }, 1000);
     });
+  }, [selectedBuilding]);
+
+  // Handle map press to deselect building (unchanged)
+  const handleMapPress = useCallback(() => {
+    setSelectedBuilding(null);
+    Keyboard.dismiss();
+    setIsSearchFocused(false);
   }, []);
+
+  // Updated search change handler to use enhanced search
   const handleSearchChange = useCallback((query) => {
     setSearchQuery(query);
-    const filtered = buildings.filter((building) =>
-      building.title.toLowerCase().includes(query.toLowerCase())
+    const filtered = buildings.filter((building) => 
+      searchBuilding(query, building)
     );
     setFilteredBuildings(filtered);
   }, [buildings]);
+
+  // Handle search input focus (unchanged)
   const handleSearchFocus = useCallback(() => {
     setIsSearchFocused(true);
     setFilteredBuildings(buildings);
   }, [buildings]);
+
+  // Handle search input blur (unchanged)
   const handleSearchBlur = useCallback(() => {
     if (!searchQuery) {
       setIsSearchFocused(false);
     }
   }, [searchQuery]);
-  // Memoize markers to prevent unnecessary re-renders
+  
+  // Render markers (unchanged)
   const renderMarkers = useMemo(() =>
     buildings.map((building) => (
       <Marker
@@ -130,14 +247,16 @@ const MapScreen = () => {
           latitude: building.latitude,
           longitude: building.longitude,
         }}
-        tracksViewChanges={false}
-        onPress={() => setSelectedBuilding(building)}
+        onPress={() => handleBuildingSelect(building)}
       >
         <CustomMarker
           title={building.title}
           isSelected={selectedBuilding?.id === building.id}
         />
-        <Callout tooltip>
+        <Callout 
+          tooltip 
+          onPress={() => handleBuildingSelect(building)}
+        >
           <CustomCallout
             title={building.title}
             description={building.description}
@@ -146,8 +265,10 @@ const MapScreen = () => {
         </Callout>
       </Marker>
     )),
-    [buildings, selectedBuilding]
+    [buildings, selectedBuilding, handleBuildingSelect]
   );
+
+  // Rest of the component remains the same (return statement and styles)
   return (
     <SafeAreaView style={styles.container}>
       <MapView
@@ -158,6 +279,7 @@ const MapScreen = () => {
         userInterfaceStyle="dark"
         minZoomLevel={13}
         maxZoomLevel={20}
+        onPress={handleMapPress}
       >
         {renderMarkers}
       </MapView>
@@ -210,6 +332,7 @@ const MapScreen = () => {
     </SafeAreaView>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -350,78 +473,85 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  calloutWrapper: {
-    alignItems: 'center',
-  },
-  calloutContainer: {
-    width: 280,
-    borderRadius: 16,
-    backgroundColor: 'rgba(30, 30, 30, 0.85)',
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    marginBottom: 8,
-  },
-  calloutContent: {
-    padding: 16,
-  },
   calloutHeader: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  calloutIcon: {
-    marginRight: 12,
-    marginTop: 2,
+  calloutWrapper: {
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  calloutContainer: {
+    width: 300,
+    borderRadius: 12,
+    backgroundColor: 'rgba(45, 45, 45, 0.9)', // Slightly darker for better contrast
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.15)',
+    shadowColor: '#000',
+    shadowOffset: {
+    width: 0,
+    height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,  
+    elevation: 10,
+    padding: 16,
+  },
+  calloutArrow: {
+    width: 0,
+    height: 0,
+    borderStyle: 'solid',
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderTopWidth: 10,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: 'rgba(45, 45, 45, 0.9)', // Matches the background color
+    alignSelf: 'center',
+  },
+  calloutIconContainer: {
+    marginRight: 10,
   },
   calloutTextContainer: {
     flex: 1,
   },
   calloutTitle: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: 'bold',
     color: '#FFFFFF',
-    fontWeight: '600',
-    marginBottom: 4,
-    letterSpacing: 0.1,
+    marginBottom: 6,
   },
   calloutDescription: {
     fontSize: 14,
-    color: 'rgba(255, 255, 255, 0.6)',
-    marginBottom: 8,
+    color: 'rgba(200, 200, 200, 1)',
     lineHeight: 20,
+    marginBottom: 10,
+  },
+  calloutContent: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
   },
   accessibilityContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 4,
+    paddingTop: 8, // Added separation for clarity
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255, 255, 255, 0.1)', // Light divider
+    marginTop: 8,
   },
   accessibilityIcon: {
     marginRight: 6,
   },
+  accessibilityIconContainer: {
+    marginRight: 8,
+  },
   calloutAccessibility: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.8)',
+    fontSize: 13,
+    color: 'rgba(180, 180, 180, 1)',
     flex: 1,
   },
-  calloutArrow: {
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderTopWidth: 8,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-    borderTopColor: 'rgba(30, 30, 30, 0.85)',
-    alignSelf: 'center',
-  },
 });
+
 export default MapScreen;
