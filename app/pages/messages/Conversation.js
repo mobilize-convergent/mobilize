@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     },
     userBMessage: {
         alignSelf: 'flex-end',
-        backgroundColor: '#2c3e50',  // Darker background for User B
+        backgroundColor: '#c3c3c3',  // Darker background for User B
     },
     messageText: {
         fontSize: 16,

@@ -4,10 +4,16 @@ import * as FileSystem from 'expo-file-system';
 import Dropdown from '../components/Dropdown';
 
 const SignUp = ({ navigation }) => {
+    // New state variables for additional user info
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phone, setPhone] = useState('');
+    const [bio, setBio] = useState('');
 
+    // Validate inputs
     const validateInputs = () => {
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -28,6 +34,31 @@ const SignUp = ({ navigation }) => {
             return false;
         }
 
+        // First Name validation
+        if (!firstName) {
+            Alert.alert("First Name Required", "Please enter your first name");
+            return false;
+        }
+
+        // Last Name validation
+        if (!lastName) {
+            Alert.alert("Last Name Required", "Please enter your last name");
+            return false;
+        }
+
+        // Phone validation
+        const phoneRegex = /^[0-9]{10}$/; // Simple phone number validation for 10 digits
+        if (!phoneRegex.test(phone)) {
+            Alert.alert("Invalid Phone", "Please enter a valid 10-digit phone number");
+            return false;
+        }
+
+        // Bio validation (optional but can add length check if necessary)
+        if (bio.length > 500) {
+            Alert.alert("Biography too long", "Please keep your biography under 500 characters.");
+            return false;
+        }
+
         return true;
     };
 
@@ -36,7 +67,6 @@ const SignUp = ({ navigation }) => {
         if (!validateInputs()) {
             return;
         }
-
 
         const usersFileUri = `${FileSystem.documentDirectory}users.json`;
         let users = [];
@@ -64,8 +94,18 @@ const SignUp = ({ navigation }) => {
             return;
         }
 
+        const newUser = {
+            email,
+            password,
+            role,
+            firstName,
+            lastName,
+            phone,
+            bio
+        };
+
         if (role === 'disabled') {
-            users.push({ email, password, role });
+            users.push(newUser);
             try {
                 await FileSystem.writeAsStringAsync(usersFileUri, JSON.stringify(users));
                 navigation.reset({
@@ -86,6 +126,10 @@ const SignUp = ({ navigation }) => {
                 email,
                 password,
                 role,
+                firstName,
+                lastName,
+                phone,
+                bio,
             });
         }
     };
@@ -99,6 +143,46 @@ const SignUp = ({ navigation }) => {
         <View style={styles.container}>
             <Text style={styles.title}>Sign Up</Text>
 
+            {/* New First Name input */}
+            <TextInput
+                style={styles.input}
+                placeholder="First Name"
+                placeholderTextColor="#999"
+                onChangeText={setFirstName}
+                value={firstName}
+            />
+
+            {/* New Last Name input */}
+            <TextInput
+                style={styles.input}
+                placeholder="Last Name"
+                placeholderTextColor="#999"
+                onChangeText={setLastName}
+                value={lastName}
+            />
+
+            {/* New Phone input */}
+            <TextInput
+                style={styles.input}
+                placeholder="Phone Number"
+                placeholderTextColor="#999"
+                onChangeText={setPhone}
+                value={phone}
+                keyboardType="phone-pad"
+            />
+
+            {/* New Biography input */}
+            <TextInput
+                style={styles.input}
+                placeholder="Biography"
+                placeholderTextColor="#999"
+                onChangeText={setBio}
+                value={bio}
+                multiline
+                numberOfLines={4}
+            />
+
+            {/* Email input */}
             <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -110,6 +194,7 @@ const SignUp = ({ navigation }) => {
                 autoCorrect={false}
             />
 
+            {/* Password input */}
             <TextInput
                 style={styles.input}
                 placeholder="Password"
@@ -121,6 +206,7 @@ const SignUp = ({ navigation }) => {
                 autoCorrect={false}
             />
 
+            {/* Dropdown for selecting role */}
             <Dropdown
                 label="Select Role"
                 data={roleOptions}
@@ -129,6 +215,7 @@ const SignUp = ({ navigation }) => {
                 placeholder="Select your role"
             />
 
+            {/* Submit Button */}
             <TouchableOpacity
                 style={styles.button}
                 onPress={handleSignUp}

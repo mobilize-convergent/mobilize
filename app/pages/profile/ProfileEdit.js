@@ -1,166 +1,138 @@
-import React, { useState } from "react";
-import {
-    View,
-    Text,
-    TextInput,
-    StyleSheet,
-    TouchableOpacity,
-    ScrollView,
-    Alert,
-} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
 
+const ProfileEdit = ({ route, navigation }) => {
+  // Destructure the profile data and updateProfile function passed from Profile screen
+  const { profileData, updateProfile } = route.params;
 
-const ProfileEdit = () => {
-    const [formData, setFormData] = useState({
-        firstName: "Jake",
-        lastName: "Miller",
-        phone: "+1 346 123 4567",
-        email: "jakem12@gmail.com",
-        biography:
-            "Engineer by day, adventure-seeker by weekend. I'm a mechanical engineer who loves solving complex problems and tinkering with new gadgets. When I’m not busy at work, you’ll probably find me on the trails with my dog Max, discovering hidden hiking spots, or volunteering at the local shelter.",
-    });
-    const handleChange = (name, value) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
-    };
-    const handleSave = () => {
-        // Save logic (e.g., API call)
-        Alert.alert("Profile Saved", "Your changes have been saved successfully!");
-    };
-    return (
-        <View>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.button}
-                //onPress={}
-                >
-                    <Text style={styles.headerText}>Back</Text>
-                </TouchableOpacity>
-                <Text style={styles.headerText}>Edit Profile</Text>
-                <TouchableOpacity
-                    style={styles.button}
-                //onPress={}
-                >
-                    <Text style={styles.headerText}>Done</Text>
-                </TouchableOpacity>
-            </View>
-            <ScrollView contentContainerStyle={styles.container}>
-                <View style={styles.profilePictureContainer}>
-                    <View style={styles.profilePicture} />
-                    <TouchableOpacity style={styles.cameraIcon}>
-                        <Text style={styles.cameraText}>:camera:</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>First Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formData.firstName}
-                        onChangeText={(value) => handleChange("firstName", value)}
-                    />
-                </View>
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Last Name</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formData.lastName}
-                        onChangeText={(value) => handleChange("lastName", value)}
-                    />
-                </View>
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Phone</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formData.phone}
-                        onChangeText={(value) => handleChange("phone", value)}
-                    />
-                </View>
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Email</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={formData.email}
-                        onChangeText={(value) => handleChange("email", value)}
-                        keyboardType="email-address"
-                    />
-                </View>
-                <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Biography</Text>
-                    <TextInput
-                        style={[styles.input, styles.textarea]}
-                        value={formData.biography}
-                        onChangeText={(value) => handleChange("biography", value)}
-                        multiline
-                    />
-                </View>
-            </ScrollView>
-        </View>
-    );
+  // State to hold editable profile data
+  const [firstName, setFirstName] = useState(profileData.firstName);
+  const [lastName, setLastName] = useState(profileData.lastName);
+  const [phone, setPhone] = useState(profileData.phone);
+  const [email, setEmail] = useState(profileData.email);
+  const [bio, setBio] = useState(profileData.bio);
+
+  // Handle save action to update profile
+  const handleSave = () => {
+    const updatedData = { firstName, lastName, phone, email, bio };
+    updateProfile(updatedData); // Update profile data in the parent Profile component
+    navigation.goBack(); // Navigate back to Profile screen after saving
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Edit Profile</Text>
+      
+      {/* First Name input */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>First Name</Text>
+        <TextInput
+          style={styles.input}
+          value={firstName}
+          onChangeText={setFirstName}
+          placeholder="Enter your first name"
+        />
+      </View>
+      
+      {/* Last Name input */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Last Name</Text>
+        <TextInput
+          style={styles.input}
+          value={lastName}
+          onChangeText={setLastName}
+          placeholder="Enter your last name"
+        />
+      </View>
+
+      {/* Phone input */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Phone</Text>
+        <TextInput
+          style={styles.input}
+          value={phone}
+          onChangeText={setPhone}
+          placeholder="Enter your phone number"
+          keyboardType="phone-pad"
+        />
+      </View>
+
+      {/* Email input */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.input}
+          value={email}
+          onChangeText={setEmail}
+          placeholder="Enter your email"
+          keyboardType="email-address"
+        />
+      </View>
+
+      {/* Biography input */}
+      <View style={styles.inputContainer}>
+        <Text style={styles.label}>Biography</Text>
+        <TextInput
+          style={[styles.input, styles.bioInput]}
+          value={bio}
+          onChangeText={setBio}
+          placeholder="Enter your biography"
+          multiline
+        />
+      </View>
+      
+      {/* Save Button */}
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <Text style={styles.saveButtonText}>Save</Text>
+      </TouchableOpacity>
+    </View>
+  );
 };
+
 const styles = StyleSheet.create({
-    container: {
-        padding: 16,
-        backgroundColor: "#fff",
-    },
-    header: {
-        backgroundColor: '#F0F0F0',
-        padding: 30,
-        flexDirection: 'row',
-    },
-    headerText: {
-        fontSize: 20,
-        paddingTop: 30,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        paddingRight: 65,
-    },
-    profilePictureContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 10,
-        marginBottom: 10,
-        position: "relative",
-    },
-    profilePicture: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: "#ccc",
-    },
-    cameraIcon: {
-        position: "absolute",
-        bottom: 0,
-        right: 10,
-        backgroundColor: "#fff",
-        borderRadius: 15,
-        padding: 4,
-        elevation: 2,
-    },
-    cameraText: {
-        fontSize: 16,
-    },
-    inputGroup: {
-        marginBottom: 16,
-    },
-    label: {
-        fontSize: 14,
-        fontWeight: "bold",
-        marginBottom: 4,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 8,
-        padding: 10,
-        fontSize: 16,
-        backgroundColor: "#F9F9F9",
-    },
-    textarea: {
-        height: 100,
-        textAlignVertical: "top",
-    },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 16,
+    paddingTop: 40,
+    justifyContent: "space-between",
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  inputContainer: {
+    marginBottom: 20,
+  },
+  label: {
+    fontSize: 16,
+    marginBottom: 8,
+    color: "#555",
+  },
+  input: {
+    height: 40,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 4,
+    paddingLeft: 10,
+    fontSize: 16,
+  },
+  bioInput: {
+    height: 100,
+    textAlignVertical: "top", // For multiline text to align at the top
+  },
+  saveButton: {
+    backgroundColor: "#007BFF",
+    paddingVertical: 12,
+    borderRadius: 4,
+    alignItems: "center",
+  },
+  saveButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
 });
 
 export default ProfileEdit;

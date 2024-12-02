@@ -1,16 +1,39 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from "react-native";
+import React, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
 
 const Profile = ({ navigation }) => {
+  // Define state to hold profile data
+  const [profileData, setProfileData] = useState({
+    firstName: "Jake",
+    lastName: "M.",
+    phone: "+123456789",
+    email: "jakem12@gmail.com",
+    bio: "Software developer passionate about React Native and building mobile apps.",
+  });
+
+  // Function to update profile data
+  const updateProfile = (updatedData) => {
+    console.log("calling updateProfile");
+    setProfileData(updatedData);
+  };
+
   return (
     <View style={styles.container}>
       {/* Profile Info */}
       <View style={styles.profileInfo}>
         <View style={styles.profilePicture} />
         <View style={styles.userInfo}>
-          <Text style={styles.name}>Jake M.</Text>
-          <Text style={styles.email}>jakem12@gmail.com</Text>
-          <TouchableOpacity style={styles.editButton}>
+          <Text style={styles.name}>{profileData.firstName} {profileData.lastName}</Text>
+          <Text style={styles.email}>{profileData.email}</Text>
+          <TouchableOpacity
+            style={styles.editButton}
+            onPress={() =>
+              navigation.navigate("ProfileEdit", {
+                profileData,
+                updateProfile, // Pass updateProfile function to ProfileEdit
+              })
+            }
+          >
             <Text style={styles.editButtonText}>Edit Profile</Text>
           </TouchableOpacity>
         </View>
@@ -34,7 +57,7 @@ const Profile = ({ navigation }) => {
           <Text>❓ Help</Text>
           <Text>➡️</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.optionItem}
           onPress={() => navigation.navigate("Land")}
         >
