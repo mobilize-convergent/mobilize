@@ -35,7 +35,7 @@ const ProfileEdit = () => {
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.profilePictureContainer}>
-          <Image source={require('../../images/person.png')} style={styles.personIcon} />
+          <Image source={require('../images/person.png')} style={styles.personIcon} />
           <TouchableOpacity style={styles.cameraIcon}>
             <Text style={styles.cameraText}>📷</Text>
           </TouchableOpacity>

@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import Ionicons from '@expo/vector-icons/Ionicons';
+import Entypo from '@expo/vector-icons/Entypo';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
 
 const Profile = ({ navigation }) => {
   const [profileData, setProfileData] = useState({
@@ -42,7 +46,7 @@ const Profile = ({ navigation }) => {
     
       {/* Profile Info */}
       <View style={styles.profileInfo}>
-        <Image source={require('images/person.png')} style={styles.profilePicture} />
+        <Image source={require('../../images/person.png')} style={styles.profilePicture} />
         <View style={styles.userInfo}>
           <Text style={styles.userName}>
             {profileData.firstName} {profileData.lastName}
@@ -64,7 +68,7 @@ const Profile = ({ navigation }) => {
 
   <View style={styles.imageContainer}>
     <View style={styles.line} />
-    <Image source={require('images/stars.png')} style={styles.stars} />
+    <Image source={require('../../images/stars.png')} style={styles.stars} />
     <View style={styles.line} />
   </View>
     
@@ -89,7 +93,7 @@ const Profile = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionItem}>
-          <FontAwesome name="question-circle-o" size={20} color="#000" />
+          {/* <FontAwesome name="question-circle-o" size={20} color="#000" /> */}
           <Text style={styles.optionText}>Help</Text>
           <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
