@@ -3,53 +3,35 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const AddRoute = ({ route, navigation }) => {
-  const { routes: existingRoutes = [] } = route.params || {}; // Fallback to an empty array if routes is undefined
+  const { routes = [], addRoute } = route.params;
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState('08:00');
+  const [fromLocation, setFromLocation] = useState(''); // New state for "From" location
+  const [toLocation, setToLocation] = useState(''); // New state for "To" location
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [timeSelectionType, setTimeSelectionType] = useState('start');
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
-  const handleAddRoute = async () => {
-    const formattedDate = selectedDate.toLocaleDateString('en-US', {
+  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+
+  const formatDate = (date) => {
+    return new Intl.DateTimeFormat('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
-    });
-  
-    const newRoute = {
-      date: formattedDate,
-      time: startTime,
-      route: 'place holder', // You might want to add an input for this
-      volunteer: 'Jeff J',
-      status: 'pending',
-    };
-  
-    // Merge existing routes with the new route
-    const updatedRoutes = [...(existingRoutes || []), newRoute];
-  
-    Alert.alert('Add Route', 'Are you sure you want to add this route?', [
-      {
-        text: 'Cancel',
-        style: 'cancel',
-      },
-      {
-        text: 'Yes, Add Route',
-        onPress: () => {
-          console.log(JSON.stringify(updatedRoutes));
-          navigation.navigate('StudentTabs', {
-            screen: 'StudentHome',
-            params: { updatedRoutes },
-          });
-        },
-      },
-    ]);
+    }).format(date);
   };
-  
 
-  const days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+  // Format the time as "8:00 AM"
+  const formatTime = (time) => {
+    const [hours, minutes] = time.split(':').map(Number);
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedHour = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMinutes = minutes.toString().padStart(2, '0');
+    return `${formattedHour}:${formattedMinutes} ${ampm}`;
+  };
 
   const getDaysInMonth = (date) => {
     const year = date.getFullYear();
@@ -59,7 +41,6 @@ const AddRoute = ({ route, navigation }) => {
 
     const daysInMonth = new Array(42).fill(null);
 
-    // Fill current month's dates
     for (let i = 0; i < lastDate; i++) {
       daysInMonth[firstDay + i] = {
         date: i + 1,
@@ -67,7 +48,6 @@ const AddRoute = ({ route, navigation }) => {
       };
     }
 
-    // Fill previous month's dates
     const prevMonthLastDate = new Date(year, month, 0).getDate();
     for (let i = 0; i < firstDay; i++) {
       daysInMonth[i] = {
@@ -76,7 +56,6 @@ const AddRoute = ({ route, navigation }) => {
       };
     }
 
-    // Ensure the calendar has only 7 days in a row
     const weeks = [];
     for (let i = 0; i < daysInMonth.length; i += 7) {
       weeks.push(daysInMonth.slice(i, i + 7));
@@ -115,6 +94,32 @@ const AddRoute = ({ route, navigation }) => {
       setStartTime(time);
     }
     setDropdownVisible(false);
+  };
+
+  const handleAddRoute = () => {
+    if (!fromLocation || !toLocation) {
+      Alert.alert('Error', 'Please specify both "From" and "To" locations.');
+      return;
+    }
+
+    // const newRoute = {
+    //   date: selectedDate.toLocaleDateString(),
+    //   time: startTime,
+    //   route: `${fromLocation} → ${toLocation}`, // Route name from "From" to "To"
+    //   volunteer: null,
+    //   status: 'pending',
+    // };
+
+    const newRoute = {
+      date: formatDate(selectedDate), // Using the formatted date
+      time: formatTime(startTime), // Using the formatted time
+      route: `${fromLocation} → ${toLocation}`, // Route name from "From" to "To"
+      volunteer: null,
+      status: 'pending',
+    };
+
+    addRoute(newRoute); // Call the addRoute function passed from the parent
+    navigation.goBack(); // Navigate back to the previous screen
   };
 
   return (
@@ -192,6 +197,28 @@ const AddRoute = ({ route, navigation }) => {
           </View>
         </View>
 
+        <View style={styles.locationSection}>
+          <View style={styles.locationField}>
+            <Text style={styles.locationLabel}>From:</Text>
+            <TextInput
+              style={styles.locationInput}
+              value={fromLocation}
+              onChangeText={setFromLocation}
+              placeholder="Enter starting location"
+            />
+          </View>
+
+          <View style={styles.locationField}>
+            <Text style={styles.locationLabel}>To:</Text>
+            <TextInput
+              style={styles.locationInput}
+              value={toLocation}
+              onChangeText={setToLocation}
+              placeholder="Enter destination location"
+            />
+          </View>
+        </View>
+
         {isDropdownVisible && (
           <View style={[styles.dropdown, { top: dropdownPosition.top + 40, left: dropdownPosition.left - 100 }]}>
             <ScrollView style={styles.timeDropdown}>
@@ -229,6 +256,7 @@ const AddRoute = ({ route, navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  // Your existing styles...
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
@@ -362,6 +390,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: 'white',
+  },
+  locationSection: {
+    marginBottom: 24,
+  },
+  locationField: {
+    marginBottom: 12,
+  },
+  locationLabel: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 4,
+  },
+  locationInput: {
+    padding: 12,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 8,
   },
 });
 

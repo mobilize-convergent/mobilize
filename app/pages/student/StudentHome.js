@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { AddRoute } from './AddRoute'; // Import AddRoute
 
 const RouteCard = ({ date, time, route, volunteer, status, navigation }) => (
   <View style={styles.card}>
     <View style={styles.cardHeader}>
-
       <View style={styles.headerLeft}>
         <View style={[styles.userIcon, { backgroundColor: volunteer ? '#4CAF50' : '#FF5252' }]}>
           <Icon name="person" size={20} color="white" />
@@ -17,24 +17,18 @@ const RouteCard = ({ date, time, route, volunteer, status, navigation }) => (
     <View style={styles.routeInfo}>
       <View style={styles.routeLocation}>
         <Icon name="place" size={16} color="#666" />
-        <Text style={styles.routeText}>{route}</Text>
+        <Text style={styles.routeText}>Route: {route}</Text>
       </View>
 
-      {volunteer ? (
-        <View style={styles.volunteerTag}>
-          <Icon name="person" size={16} color="#666" />
-          <Text style={styles.volunteerName}>{volunteer}</Text>
-        </View>
-      ) : (
-        <View style={styles.pendingTag}>
-          <Text style={styles.pendingText}>Pending Volunteer</Text>
-        </View>
-      )}
+      <View style={styles.volunteerStatus}>
+        <Text style={styles.volunteerText}>{volunteer ? volunteer : 'No Volunteer'}</Text>
+        <Text style={styles.statusText}>{status}</Text>
+      </View>
     </View>
   </View>
 );
 
-const StudentHome = ({ navigation, route }) => {
+const StudentHome = ({ navigation }) => {
   const [routes, setRoutes] = useState([
     {
       date: 'Mon, Oct 14',
@@ -59,28 +53,18 @@ const StudentHome = ({ navigation, route }) => {
     }
   ]);
 
-  useEffect(() => {
-    const addRoute = navigation.addListener('focus', () => {
-      console.log('StudentHome focused');
-      const updatedRoutes = route.params;
-      console.log('Updated routes:', updatedRoutes);
-
-      if (updatedRoutes) {
-        console.log('Updated routes:', updatedRoutes);
-        setRoutes([...routes, ...updatedRoutes]);
-      }
-    });
-
-    return addRoute;
-  }, [navigation, route, routes]);
+  const addRoute = (newRoute) => {
+    setRoutes(prevRoutes => [...prevRoutes, newRoute]);
+  };
 
   return (
-    <View style={styles.container}>
+
+        <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Your Routes</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('AddRoute', { routes })}
+          onPress={() => navigation.navigate('AddRoute', { routes, addRoute })}
         >
           <Icon name="add" size={24} color="#000" />
         </TouchableOpacity>
@@ -194,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default StudentHome;
+export { StudentHome };
