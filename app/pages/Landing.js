@@ -25,7 +25,7 @@ const Landing = ({ navigation }) => {
             <Text>👁️</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.loginButton}>
+        <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('Login')}>
           <Text style={styles.loginButtonText}>LOGIN</Text>
         </TouchableOpacity>
         <TouchableOpacity>
@@ -34,7 +34,7 @@ const Landing = ({ navigation }) => {
       </View>
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Don’t have an account? </Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
           <Text style={styles.registerLink}>Register</Text>
         </TouchableOpacity>
       </View>
