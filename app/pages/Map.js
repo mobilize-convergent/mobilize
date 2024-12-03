@@ -74,10 +74,10 @@ const MapScreen = () => {
 
   // Define the boundaries of the UT Austin area
   const UTAreaBoundaries = {
-    latitude: 30.2848,
-    longitude: -97.7355,
-    latitudeDelta: 0.015,
-    longitudeDelta: 0.015,
+    latitude: 30.2862,
+    longitude: -97.7394,
+    latitudeDelta: 0.006,
+    longitudeDelta: 0.008,
   };
 
   const initialRegion = UTAreaBoundaries;
