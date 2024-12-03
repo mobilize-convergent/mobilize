@@ -50,22 +50,6 @@ const Messages = ({ navigation }) => {
         renderItem={renderMessageItem}
         style={styles.messageList}
       />
-
-      {/* Bottom Navigation Bar - PLACEHOLDERS ICONS FOR NOW */}
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navIcon}>
-          <Image source={require('../../images/person.png')} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navIcon}>
-          <Image source={require('../../images/person.png')} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navIcon}>
-          <Image source={require('../../images/person.png')} style={styles.icon} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navIcon}>
-          <Image source={require('../../images/person.png')} style={styles.icon} />
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };
@@ -80,7 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 50,
+    paddingVertical: 35,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#cccccc',
@@ -132,16 +116,6 @@ const styles = StyleSheet.create({
   messageTime: {
     fontSize: 12,
     marginLeft: 8,
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#174864',
-    paddingVertical: 30,
-  },
-  navIcon: {
-    padding: 5,
   },
   icon: {
     width: 24,

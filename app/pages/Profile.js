@@ -16,7 +16,7 @@ const Profile = ({ navigation }) => {
 
       {/* Profile Info */}
       <View style={styles.profileInfo}>
-        <Image source={require('../images/person.png')} style={styles.profilePicture} />
+        <Image source={require('../../images/person.png')} style={styles.profilePicture} />
         <View style={styles.userInfo}>
           <Text style={styles.name}>Jake M.</Text>
           <Text style={styles.email}>jakem12@gmail.com</Text>
@@ -28,7 +28,7 @@ const Profile = ({ navigation }) => {
 
 <View style={styles.imageContainer}>
   <View style={styles.line} />
-  <Image source={require('../images/stars.png')} style={styles.stars} />
+  <Image source={require('images/stars.png')} style={styles.stars} />
   <View style={styles.line} />
 </View>
     

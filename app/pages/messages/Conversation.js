@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
-        paddingTop: 35,
-        backgroundColor: '#D9D9D9',
+        paddingTop: 30,
+        backgroundColor: '#F6F6F6',
     },
     headerCenter: {
         flexDirection: 'column', 
@@ -169,7 +169,6 @@ const styles = StyleSheet.create({
     sendButton: {
       width: 30, 
       height: 30,
-      color: '#2c3e50',
     },
 
 });
