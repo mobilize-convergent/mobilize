@@ -3,7 +3,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Landing from './pages/Landing';
-import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import VolunteerHome from './pages/volunteer/VolunteerHome';
 import StudentHome from './pages/student/StudentHome';
@@ -45,7 +44,6 @@ export default function Index() {
     <NavigationContainer independent={true}>
       <Stack.Navigator initialRouteName="Land" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Land" component={Landing} />
-        <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="VolunteerTabs" component={VolunteerTabs} />
         <Stack.Screen name="StudentTabs" component={StudentTabs} />

@@ -13,7 +13,7 @@ const Training = ({ route, navigation }) => {
                 index: 1,
                 routes: [
                     { name: 'Land' },
-                    { name: 'Login' }
+                    // { name: 'Login' }
                 ],
             })
         } catch (error) {
