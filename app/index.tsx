@@ -6,14 +6,14 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
 import VolunteerHome from './pages/volunteer/VolunteerHome';
-import { StudentHome } from './pages/student/StudentHome';
+import StudentHome from './pages/student/StudentHome';
 import Training from './pages/volunteer/Training';
 import Map from './pages/Map';
 import Messages from './pages/messages/Messages';
 import Conversation from './pages/messages/Conversation';
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
-import { AddRoute } from './pages/student/AddRoute';
+import AddRoute from './pages/student/AddRoute';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();

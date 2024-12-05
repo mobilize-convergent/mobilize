@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert, TextInput 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const AddRoute = ({ route, navigation }) => {
-  const { routes = [], addRoute } = route.params;
+  const { addRoute } = route.params;
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState('08:00');
@@ -101,14 +101,6 @@ const AddRoute = ({ route, navigation }) => {
       Alert.alert('Error', 'Please specify both "From" and "To" locations.');
       return;
     }
-
-    // const newRoute = {
-    //   date: selectedDate.toLocaleDateString(),
-    //   time: startTime,
-    //   route: `${fromLocation} → ${toLocation}`, // Route name from "From" to "To"
-    //   volunteer: null,
-    //   status: 'pending',
-    // };
 
     const newRoute = {
       date: formatDate(selectedDate), // Using the formatted date
@@ -409,4 +401,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { AddRoute };
+export default AddRoute;

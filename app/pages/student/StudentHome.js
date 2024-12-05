@@ -59,20 +59,39 @@ const StudentHome = ({ navigation, route }) => {
     }
   ]);
 
+  // useEffect(() => {
+  //   const addRoute = navigation.addListener('focus', () => {
+  //     console.log('StudentHome focused');
+  //     const updatedRoutes = route.params;
+  //     console.log('Updated routes:', updatedRoutes);
+
+  //     if (updatedRoutes) {
+  //       console.log('Updated routes:', updatedRoutes);
+  //       setRoutes([...routes, ...updatedRoutes]);
+  //     }
+  //   });
+
+  //   return addRoute;
+  // }, [navigation, route, routes]);
+
+  // The addRoute function should be passed down to the AddRoute screen
+  const addRoute = (newRoute) => {
+    setRoutes((prevRoutes) => [...prevRoutes, newRoute]);
+  };
+
   useEffect(() => {
-    const addRoute = navigation.addListener('focus', () => {
+    const addRouteListener = navigation.addListener('focus', () => {
       console.log('StudentHome focused');
       const updatedRoutes = route.params;
       console.log('Updated routes:', updatedRoutes);
 
       if (updatedRoutes) {
-        console.log('Updated routes:', updatedRoutes);
-        setRoutes([...routes, ...updatedRoutes]);
+        setRoutes((prevRoutes) => [...prevRoutes, ...updatedRoutes]);
       }
     });
 
-    return addRoute;
-  }, [navigation, route, routes]);
+    return addRouteListener;
+  }, [navigation, route]);
 
   return (
     <View style={styles.container}>
@@ -80,7 +99,7 @@ const StudentHome = ({ navigation, route }) => {
         <Text style={styles.headerTitle}>Your Routes</Text>
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate('AddRoute', { routes })}
+          onPress={() => navigation.navigate('AddRoute', { routes, addRoute })}
         >
           <Icon name="add" size={24} color="#000" />
         </TouchableOpacity>
@@ -194,4 +213,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export { StudentHome };
+export default StudentHome;
