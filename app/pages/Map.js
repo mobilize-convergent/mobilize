@@ -84,24 +84,24 @@ const MapScreen = () => {
 
   // New function to check if the map is within the desired area
   const isRegionWithinBounds = (region) => {
-    const withinLatitude = 
+    const withinLatitude =
       region.latitude >= UTAreaBoundaries.latitude - 0.05 &&
       region.latitude <= UTAreaBoundaries.latitude + 0.05;
-    
-    const withinLongitude = 
+
+    const withinLongitude =
       region.longitude >= UTAreaBoundaries.longitude - 0.05 &&
       region.longitude <= UTAreaBoundaries.longitude + 0.05;
-    
+
     return withinLatitude && withinLongitude;
   };
 
-    // New handler for region change
-    const handleRegionChangeComplete = useCallback((region) => {
-      if (!isRegionWithinBounds(region)) {
-        // If scrolled too far, animate back to initial region
-        mapRef.current?.animateToRegion(UTAreaBoundaries, 1000);
-      }
-    }, []);
+  // New handler for region change
+  const handleRegionChangeComplete = useCallback((region) => {
+    if (!isRegionWithinBounds(region)) {
+      // If scrolled too far, animate back to initial region
+      mapRef.current?.animateToRegion(UTAreaBoundaries, 1000);
+    }
+  }, []);
 
 
   // Enhanced buildings array with searchable aliases
@@ -212,7 +212,7 @@ const MapScreen = () => {
       building.title.toLowerCase(),
       ...(building.aliases || []).map(alias => alias.toLowerCase())
     ];
-    
+
     return searchTargets.some(target => target.includes(normalizedQuery));
   };
 
@@ -222,7 +222,7 @@ const MapScreen = () => {
     setSearchQuery(building.title);
     setFilteredBuildings([]);
     setIsSearchFocused(false);
-    
+
     // If clicking the same building, deselect it
     if (selectedBuilding?.id === building.id) {
       setSelectedBuilding(null);
@@ -251,7 +251,7 @@ const MapScreen = () => {
   // Updated search change handler to use enhanced search
   const handleSearchChange = useCallback((query) => {
     setSearchQuery(query);
-    const filtered = buildings.filter((building) => 
+    const filtered = buildings.filter((building) =>
       searchBuilding(query, building)
     );
     setFilteredBuildings(filtered);
@@ -269,7 +269,7 @@ const MapScreen = () => {
       setIsSearchFocused(false);
     }
   }, [searchQuery]);
-  
+
   // Render markers (unchanged)
   const renderMarkers = useMemo(() =>
     buildings.map((building) => (
@@ -285,8 +285,8 @@ const MapScreen = () => {
           title={building.title}
           isSelected={selectedBuilding?.id === building.id}
         />
-        <Callout 
-          tooltip 
+        <Callout
+          tooltip
           onPress={() => handleBuildingSelect(building)}
         >
           <CustomCallout
@@ -302,69 +302,78 @@ const MapScreen = () => {
 
   // Rest of the component remains the same (return statement and styles)
   return (
-    <SafeAreaView style={styles.container}>
-      <MapView
-        ref={mapRef}
-        style={styles.map}
-        initialRegion={initialRegion}
-        showsUserLocation={true}
-        userInterfaceStyle="dark"
-        minZoomLevel={13}
-        maxZoomLevel={20}
-        onPress={handleMapPress}
-        onRegionChangeComplete={handleRegionChangeComplete}
-      >
-        {renderMarkers}
-      </MapView>
-      <View style={styles.searchContainer}>
-        <BlurView intensity={20} tint="dark" style={styles.searchBarWrapper}>
-          <View style={styles.searchInputContainer}>
-            <Feather name="search" size={20} color="#BF5700" style={styles.searchIcon} />
-            <TextInput
-              value={searchQuery}
-              onChangeText={handleSearchChange}
-              onFocus={handleSearchFocus}
-              onBlur={handleSearchBlur}
-              placeholder="Search buildings..."
-              placeholderTextColor="rgba(255, 255, 255, 0.5)"
-              style={styles.searchBar}
-            />
-          </View>
-        </BlurView>
-        {isSearchFocused && (
-          <BlurView intensity={40} tint="dark" style={styles.searchResultsList}>
-            <FlatList
-              data={filteredBuildings}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => handleBuildingSelect(item)}
-                  style={styles.searchResultItem}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.searchResultContent}>
-                    <Feather name="map-pin" size={16} color="#BF5700" style={styles.resultIcon} />
-                    <View style={styles.resultTextContainer}>
-                      <Text style={styles.searchResultText} numberOfLines={1}>
-                        {item.title}
-                      </Text>
-                      <Text style={styles.searchResultDescription} numberOfLines={1}>
-                        {item.description}
-                      </Text>
-                    </View>
-                  </View>
-                </TouchableOpacity>
-              )}
-              style={{ maxHeight: 300 }}
-              showsVerticalScrollIndicator={true}
-              keyboardShouldPersistTaps="handled"
-            />
-          </BlurView>
-        )}
+    <>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Map</Text>
       </View>
-    </SafeAreaView>
+
+      <SafeAreaView style={styles.container}>
+        <MapView
+          ref={mapRef}
+          style={styles.map}
+          initialRegion={initialRegion}
+          showsUserLocation={true}
+          userInterfaceStyle="dark"
+          minZoomLevel={13}
+          maxZoomLevel={20}
+          onPress={handleMapPress}
+          onRegionChangeComplete={handleRegionChangeComplete}
+        >
+          {renderMarkers}
+        </MapView>
+
+        <View style={styles.searchContainer}>
+          <BlurView intensity={20} tint="dark" style={styles.searchBarWrapper}>
+            <View style={styles.searchInputContainer}>
+              <Feather name="search" size={20} color="#BF5700" style={styles.searchIcon} />
+              <TextInput
+                value={searchQuery}
+                onChangeText={handleSearchChange}
+                onFocus={handleSearchFocus}
+                onBlur={handleSearchBlur}
+                placeholder="Search buildings..."
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                style={styles.searchBar}
+              />
+            </View>
+          </BlurView>
+
+          {isSearchFocused && (
+            <BlurView intensity={40} tint="dark" style={styles.searchResultsList}>
+              <FlatList
+                data={filteredBuildings}
+                keyExtractor={(item) => item.id}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    onPress={() => handleBuildingSelect(item)}
+                    style={styles.searchResultItem}
+                    activeOpacity={0.7}
+                  >
+                    <View style={styles.searchResultContent}>
+                      <Feather name="map-pin" size={16} color="#BF5700" style={styles.resultIcon} />
+                      <View style={styles.resultTextContainer}>
+                        <Text style={styles.searchResultText} numberOfLines={1}>
+                          {item.title}
+                        </Text>
+                        <Text style={styles.searchResultDescription} numberOfLines={1}>
+                          {item.description}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                )}
+                style={{ maxHeight: 300 }}
+                showsVerticalScrollIndicator={true}
+                keyboardShouldPersistTaps="handled"
+              />
+            </BlurView>
+          )}
+        </View>
+      </SafeAreaView>
+    </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -524,11 +533,11 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.15)',
     shadowColor: '#000',
     shadowOffset: {
-    width: 0,
-    height: 4,
+      width: 0,
+      height: 4,
     },
     shadowOpacity: 0.3,
-    shadowRadius: 6,  
+    shadowRadius: 6,
     elevation: 10,
     padding: 16,
   },
@@ -584,6 +593,23 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: 'rgba(180, 180, 180, 1)',
     flex: 1,
+  },
+  header: {
+    backgroundColor: '#0a0a0a', // Very dark header
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 35,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333', // Dark border
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 'bold',
+    position: 'absolute',
+    alignSelf: 'center',
   },
 });
 

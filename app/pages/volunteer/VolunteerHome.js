@@ -39,7 +39,7 @@ const VolunteerHome = () => {
                 ...routeToMove,
                 student: routeToMove.student
               };
-              setYourRoutes(current => 
+              setYourRoutes(current =>
                 current.filter(route => route.id !== routeId)
               );
               setAvailableRoutes(current => [...current, availableRoute]);
@@ -69,7 +69,7 @@ const VolunteerHome = () => {
                 ...routeToMove,
                 student: routeToMove.student
               };
-              setAvailableRoutes(current => 
+              setAvailableRoutes(current =>
                 current.filter(route => route.id !== routeId)
               );
               setYourRoutes(current => [...current, assignedRoute]);
@@ -118,23 +118,23 @@ const VolunteerHome = () => {
           </View>
           {isYourRoute && (
             <TouchableOpacity>
-              <MaterialIcons name="edit" size={20} color="#666" />
+              <MaterialIcons name="edit" size={20} color="#a0a0a0" />
             </TouchableOpacity>
           )}
         </View>
-        
+
         <View style={styles.routeDetails}>
           <View style={styles.locationContainer}>
             <Text style={styles.locationText}>{route.from} → {route.to}</Text>
           </View>
           <View style={styles.studentContainer}>
-            <MaterialIcons name="person" size={16} color="#666" />
+            <MaterialIcons name="person" size={16} color="#a0a0a0" />
             <Text style={styles.studentText}>{route.student || 'Available'}</Text>
           </View>
         </View>
 
         {!isYourRoute && (
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.availableButton}
             onPress={() => handleAssign(route.id)}
           >
@@ -147,7 +147,7 @@ const VolunteerHome = () => {
     if (isYourRoute) {
       return (
         <Swipeable
-          renderRightActions={(progress, dragX) => 
+          renderRightActions={(progress, dragX) =>
             renderRightActions(progress, dragX, route.id)
           }
           rightThreshold={40}
@@ -163,44 +163,51 @@ const VolunteerHome = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.tabContainer}>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'your-routes' && styles.activeTab]}
-          onPress={() => setActiveTab('your-routes')}
-        >
-          <Text style={styles.tabText}>Your Routes</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.tab, activeTab === 'available-routes' && styles.activeTab]}
-          onPress={() => setActiveTab('available-routes')}
-        >
-          <Text style={styles.tabText}>Available Routes</Text>
-        </TouchableOpacity>
+    <>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Home</Text>
       </View>
 
-      <ScrollView style={styles.routesList}>
-        {(activeTab === 'your-routes' ? yourRoutes : availableRoutes).map((route) => (
-          <RouteCard 
-            key={route.id} 
-            route={route} 
-            isYourRoute={activeTab === 'your-routes'} 
-          />
-        ))}
-      </ScrollView>
-    </View>
+      <View style={styles.container}>
+        <View style={styles.tabContainer}>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'your-routes' && styles.activeTab]}
+            onPress={() => setActiveTab('your-routes')}
+          >
+            <Text style={styles.tabText}>Your Routes</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'available-routes' && styles.activeTab]}
+            onPress={() => setActiveTab('available-routes')}
+          >
+            <Text style={styles.tabText}>Available Routes</Text>
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView style={styles.routesList}>
+          {(activeTab === 'your-routes' ? yourRoutes : availableRoutes).map((route) => (
+            <RouteCard
+              key={route.id}
+              route={route}
+              isYourRoute={activeTab === 'your-routes'}
+            />
+          ))}
+        </ScrollView>
+      </View>
+    </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#000000', // Dark background
   },
   tabContainer: {
     flexDirection: 'row',
-    backgroundColor: '#e5e5e5',
+    backgroundColor: '#1e1e1e', // Slightly lighter than background
     borderRadius: 8,
     padding: 4,
     marginBottom: 16,
@@ -212,7 +219,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   activeTab: {
-    backgroundColor: 'white',
+    backgroundColor: '#2c2c2c', // Dark elevated state
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,
@@ -221,12 +228,13 @@ const styles = StyleSheet.create({
   },
   tabText: {
     textAlign: 'center',
+    color: '#e0e0e0', // Light text
   },
   routesList: {
     flex: 1,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: '#1e1e1e', // Dark card background
     borderRadius: 12,
     marginBottom: 12,
     shadowColor: '#000',
@@ -258,6 +266,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 14,
+    color: '#e0e0e0', // Light text
   },
   routeDetails: {
     flexDirection: 'row',
@@ -266,13 +275,14 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   locationContainer: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: '#2c2c2c', // Dark background for location
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 8,
   },
   locationText: {
     fontSize: 14,
+    color: '#e0e0e0', // Light text
   },
   studentContainer: {
     flexDirection: 'row',
@@ -281,6 +291,7 @@ const styles = StyleSheet.create({
   },
   studentText: {
     fontSize: 14,
+    color: '#a0a0a0', // Slightly muted text
   },
   availableButton: {
     backgroundColor: '#4ade80',
@@ -289,8 +300,9 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   availableButtonText: {
-    color: 'white',
+    color: '#121212', // Dark text on green button
     textAlign: 'center',
+    fontWeight: 'bold',
   },
   deleteAction: {
     backgroundColor: '#ff4444',
@@ -313,7 +325,24 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: '600',
     padding: 8,
-  }
+  },
+  header: {
+    backgroundColor: '#0a0a0a', // Very dark header
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 35,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333', // Dark border
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 'bold',
+    position: 'absolute',
+    alignSelf: 'center',
+  },
 });
 
 export default VolunteerHome;

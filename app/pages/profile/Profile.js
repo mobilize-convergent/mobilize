@@ -39,9 +39,7 @@ const Profile = ({ navigation }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Ionicons name="settings-outline" size={24} color="transparent" />
-        <Text style={styles.title}>My Profile</Text>
-        <Ionicons name="settings-outline" size={24} color="black" />
+        <Text style={styles.headerTitle}>Profile</Text>
       </View>
 
       {/* Profile Info */}
@@ -123,13 +121,21 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    backgroundColor: '#174864',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 35,
     paddingHorizontal: 16,
-    paddingTop: 40,
-    paddingBottom: 20,
-    backgroundColor: "#F6F6F6",
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 'bold',
+    position: 'absolute',
+    alignSelf: 'center',
   },
   title: {
     fontSize: 24,

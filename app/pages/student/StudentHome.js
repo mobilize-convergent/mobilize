@@ -1,38 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Animated, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { MaterialIcons } from '@expo/vector-icons';
+import { Swipeable } from 'react-native-gesture-handler';  // Import Swipeable
 
-const RouteCard = ({ date, time, route, volunteer, status, navigation }) => (
-  <View style={styles.card}>
-    <View style={styles.cardHeader}>
+const RouteCard = ({ date, time, route, volunteer, status, onSwipeLeft }) => {
 
-      <View style={styles.headerLeft}>
-        <View style={[styles.userIcon, { backgroundColor: volunteer ? '#4CAF50' : '#FF5252' }]}>
-          <Icon name="person" size={20} color="white" />
+  const renderRightActions = (progress, dragX, routeId) => {
+    const trans = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [0, 100],
+    });
+
+    return (
+      <TouchableOpacity
+        style={styles.deleteAction}
+        onPress={onSwipeLeft}
+      >
+        <Animated.View
+          style={[
+            styles.deleteActionContent,
+            {
+              transform: [{ translateX: trans }],
+            },
+          ]}
+        >
+          <MaterialIcons name="delete" size={24} color="white" />
+          <Text style={styles.deleteActionText}>Delete</Text>
+        </Animated.View>
+      </TouchableOpacity>
+    );
+  };
+
+
+  return (
+    <Swipeable renderRightActions={renderRightActions}>
+      <View style={styles.card}>
+        <View style={styles.cardHeader}>
+          <View style={styles.headerLeft}>
+            <View style={[styles.userIcon, { backgroundColor: volunteer ? '#4CAF50' : '#FF5252' }]}>
+              <Icon name="person" size={20} color="white" />
+            </View>
+            <Text style={styles.dateTime}>{date} at {time}</Text>
+          </View>
         </View>
-        <Text style={styles.dateTime}>{date} at {time}</Text>
+
+        <View style={styles.routeInfo}>
+          <View style={styles.routeLocation}>
+            <Icon name="place" size={16} color="#666" />
+            <Text style={styles.routeText}>{route}</Text>
+          </View>
+
+          {volunteer ? (
+            <View style={styles.volunteerTag}>
+              <Icon name="person" size={16} color="#666" />
+              <Text style={styles.volunteerName}>{volunteer}</Text>
+            </View>
+          ) : (
+            <View style={styles.pendingTag}>
+              <Text style={styles.pendingText}>Pending Volunteer</Text>
+            </View>
+          )}
+        </View>
       </View>
-    </View>
-
-    <View style={styles.routeInfo}>
-      <View style={styles.routeLocation}>
-        <Icon name="place" size={16} color="#666" />
-        <Text style={styles.routeText}>{route}</Text>
-      </View>
-
-      {volunteer ? (
-        <View style={styles.volunteerTag}>
-          <Icon name="person" size={16} color="#666" />
-          <Text style={styles.volunteerName}>{volunteer}</Text>
-        </View>
-      ) : (
-        <View style={styles.pendingTag}>
-          <Text style={styles.pendingText}>Pending Volunteer</Text>
-        </View>
-      )}
-    </View>
-  </View>
-);
+    </Swipeable>
+  );
+};
 
 const StudentHome = ({ navigation, route }) => {
   const [routes, setRoutes] = useState([
@@ -59,49 +92,81 @@ const StudentHome = ({ navigation, route }) => {
     }
   ]);
 
-  useEffect(() => {
-    const addRoute = navigation.addListener('focus', () => {
-      console.log('StudentHome focused');
-      const updatedRoutes = route.params;
-      console.log('Updated routes:', updatedRoutes);
+  const addRoute = (newRoute) => {
+    setRoutes(prevRoutes => [...prevRoutes, newRoute]);
+  };
 
+  const deleteRoute = (routeToDelete) => {
+    Alert.alert(
+      "Delete Route",
+      "Are you sure you want to delete this route?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        {
+          text: "Yes, Delete",
+          style: "destructive",
+          onPress: () => {
+            setRoutes(prevRoutes => prevRoutes.filter(route => route !== routeToDelete));
+
+          }
+        }
+      ]
+    );
+  };
+
+  useEffect(() => {
+    const addRouteListener = navigation.addListener('focus', () => {
+      const updatedRoutes = route.params;
       if (updatedRoutes) {
-        console.log('Updated routes:', updatedRoutes);
-        setRoutes([...routes, ...updatedRoutes]);
+        setRoutes(prevRoutes => [...prevRoutes, ...updatedRoutes]);
       }
     });
 
-    return addRoute;
-  }, [navigation, route, routes]);
+    return addRouteListener;
+  }, [navigation, route]);
 
   return (
-    <View style={styles.container}>
+    <>
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Routes</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => navigation.navigate('AddRoute', { routes })}
-        >
-          <Icon name="add" size={24} color="#000" />
-        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Home</Text>
       </View>
 
-      <ScrollView style={styles.routesList}>
-        {routes.map((route, index) => (
-          <RouteCard
-            key={index}
-            date={route.date}
-            time={route.time}
-            route={route.route}
-            volunteer={route.volunteer}
-            status={route.status}
-            navigation={navigation}
-          />
-        ))}
-      </ScrollView>
-    </View>
+      <View style={styles.container}>
+        <View style={styles.yourRoutesHeader}>
+          <Text style={styles.yourRoutes}>Your Routes</Text>
+          <TouchableOpacity
+            style={styles.addButton}
+            onPress={() => navigation.navigate('AddRoute', {
+              routes: routes,
+              addRoute: addRoute
+            })}
+          >
+            <Icon name="add" size={24} color="#000" />
+          </TouchableOpacity>
+        </View>
+
+        <ScrollView style={styles.routesList}>
+          {routes.map((route, index) => (
+            <RouteCard
+              key={index}
+              date={route.date}
+              time={route.time}
+              route={route.route}
+              volunteer={route.volunteer}
+              status={route.status}
+              onSwipeLeft={() => deleteRoute(route)} // Pass delete function to RouteCard
+              navigation={navigation}
+            />
+          ))}
+        </ScrollView>
+      </View>
+    </>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -109,13 +174,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
     padding: 16,
   },
-  header: {
+  yourRoutesHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
   },
-  headerTitle: {
+  yourRoutes: {
     fontSize: 24,
     fontWeight: 'bold',
   },
@@ -192,6 +257,45 @@ const styles = StyleSheet.create({
     color: '#FF5252',
     textAlign: 'center',
   },
+  deleteAction: {
+    backgroundColor: '#ff4444',
+    justifyContent: 'center',
+    alignItems: 'flex-end',
+    marginBottom: 12,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  deleteActionContent: {
+    flex: 1,
+    backgroundColor: '#ff4444',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 100,
+    borderTopRightRadius: 12,
+    borderBottomRightRadius: 12,
+  },
+  deleteActionText: {
+    color: 'white',
+    fontWeight: '600',
+    padding: 8,
+  },
+  header: {
+    backgroundColor: '#174864',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 35,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#cccccc',
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 25,
+    fontWeight: 'bold',
+    position: 'absolute',
+    alignSelf: 'center',
+  },
 });
 
-export { StudentHome };
+export default StudentHome;
