@@ -7,8 +7,8 @@ const AddRoute = ({ route, navigation }) => {
 
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [startTime, setStartTime] = useState('08:00');
-  const [fromLocation, setFromLocation] = useState(''); // New state for "From" location
-  const [toLocation, setToLocation] = useState(''); // New state for "To" location
+  const [fromLocation, setFromLocation] = useState('');
+  const [toLocation, setToLocation] = useState('');
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [isDropdownVisible, setDropdownVisible] = useState(false);
   const [timeSelectionType, setTimeSelectionType] = useState('start');
@@ -117,23 +117,28 @@ const AddRoute = ({ route, navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Your Routes</Text>
-        <View style={styles.monthSelector}>
-          <Text style={styles.monthText}>
-            {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
-          </Text>
-          <View style={styles.monthControls}>
-            <TouchableOpacity onPress={() => changeMonth(-1)}>
-              <Icon name="chevron-left" size={24} color="#1a73e8" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => changeMonth(1)}>
-              <Icon name="chevron-right" size={24} color="#1a73e8" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Icon name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Add New Route</Text>
       </View>
 
       <View style={styles.calendar}>
+        <View style={styles.monthSelector}>
+          <TouchableOpacity onPress={() => changeMonth(-1)}>
+            <Icon name="chevron-left" size={24} color="#174864" />
+          </TouchableOpacity>
+          <Text style={styles.monthText}>
+            {currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' })}
+          </Text>
+          <TouchableOpacity onPress={() => changeMonth(1)}>
+            <Icon name="chevron-right" size={24} color="#174864" />
+          </TouchableOpacity>
+        </View>
+
         <View style={styles.weekDays}>
           {days.map((day, index) => (
             <Text key={index} style={styles.weekDay}>{day}</Text>
@@ -184,7 +189,7 @@ const AddRoute = ({ route, navigation }) => {
               style={styles.timeInput}
               onPress={(e) => handleTimeClick('start', e)}
             >
-              <Text style={styles.timeText}>{startTime}</Text>
+              <Text style={styles.timeText}>{formatTime(startTime)}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -197,6 +202,7 @@ const AddRoute = ({ route, navigation }) => {
               value={fromLocation}
               onChangeText={setFromLocation}
               placeholder="Enter starting location"
+              placeholderTextColor="#666"
             />
           </View>
 
@@ -207,6 +213,7 @@ const AddRoute = ({ route, navigation }) => {
               value={toLocation}
               onChangeText={setToLocation}
               placeholder="Enter destination location"
+              placeholderTextColor="#666"
             />
           </View>
         </View>
@@ -220,7 +227,7 @@ const AddRoute = ({ route, navigation }) => {
                   style={styles.timeOption}
                   onPress={() => handleTimeSelect(time)}
                 >
-                  <Text>{time}</Text>
+                  <Text style={styles.dropdownText}>{time}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -243,50 +250,53 @@ const AddRoute = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View >
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  // Your existing styles...
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: '#000000', // Dark background
   },
   header: {
+    backgroundColor: '#0a0a0a', // Very dark header
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333333', // Dark border
+  },
+  backButton: {
+    marginRight: 16,
+  },
+  headerTitle: {
+    color: 'white',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  calendar: {
+    backgroundColor: '#1e1e1e', // Dark card background
+    margin: 16,
+    borderRadius: 12,
+    padding: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  monthSelector: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 16,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '500',
-    color: '#666',
-  },
-  monthSelector: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   monthText: {
+    color: '#174864',
     fontSize: 18,
-    fontWeight: '500',
-    color: '#1a73e8',
-    marginRight: 8,
-  },
-  monthControls: {
-    flexDirection: 'row',
-  },
-  calendar: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 16,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    fontWeight: '600',
   },
   weekDays: {
     flexDirection: 'row',
@@ -297,7 +307,7 @@ const styles = StyleSheet.create({
     width: 40,
     textAlign: 'center',
     fontWeight: 'bold',
-    color: '#555',
+    color: '#a0a0a0',
   },
   dates: {
     marginBottom: 16,
@@ -314,13 +324,13 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 16,
-    color: '#333',
+    color: '#e0e0e0',
   },
   otherMonthDate: {
-    color: '#bbb',
+    color: '#666',
   },
   selectedDate: {
-    backgroundColor: '#1a73e8',
+    backgroundColor: '#174864',
     borderRadius: 50,
   },
   selectedDateText: {
@@ -334,33 +344,34 @@ const styles = StyleSheet.create({
   },
   timeLabel: {
     fontSize: 16,
-    color: '#333',
+    color: '#e0e0e0',
     marginBottom: 4,
   },
   timeInput: {
     padding: 12,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#2c2c2c',
     borderRadius: 8,
   },
   timeText: {
     fontSize: 16,
-    color: '#333',
+    color: '#e0e0e0',
   },
-  timeDropdown: {
-    width: 200,
-    backgroundColor: '#fff',
-    borderRadius: 8,
-    elevation: 3,
-    maxHeight: 200,
+  locationSection: {
+    marginBottom: 24,
   },
-  timeOption: {
+  locationField: {
+    marginBottom: 12,
+  },
+  locationLabel: {
+    fontSize: 16,
+    color: '#e0e0e0',
+    marginBottom: 4,
+  },
+  locationInput: {
     padding: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  dropdown: {
-    position: 'absolute',
-    zIndex: 1000,
+    backgroundColor: '#2c2c2c',
+    borderRadius: 8,
+    color: '#e0e0e0',
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -375,7 +386,7 @@ const styles = StyleSheet.create({
   continueButton: {
     paddingVertical: 12,
     paddingHorizontal: 24,
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#174864',
     borderRadius: 8,
   },
   buttonText: {
@@ -383,21 +394,24 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
   },
-  locationSection: {
-    marginBottom: 24,
+  dropdown: {
+    position: 'absolute',
+    zIndex: 1000,
   },
-  locationField: {
-    marginBottom: 12,
-  },
-  locationLabel: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 4,
-  },
-  locationInput: {
-    padding: 12,
-    backgroundColor: '#f5f5f5',
+  timeDropdown: {
+    width: 200,
+    backgroundColor: '#2c2c2c',
     borderRadius: 8,
+    elevation: 3,
+    maxHeight: 200,
+  },
+  timeOption: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#3c3c3c',
+  },
+  dropdownText: {
+    color: '#e0e0e0',
   },
 });
 

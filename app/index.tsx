@@ -2,6 +2,10 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { BlurView } from 'expo-blur';
+import { Ionicons } from '@expo/vector-icons';
+
+// Import your pages
 import Landing from './pages/Landing';
 import SignUp from './pages/SignUp';
 import VolunteerHome from './pages/volunteer/VolunteerHome';
@@ -13,7 +17,6 @@ import Conversation from './pages/messages/Conversation';
 import Profile from './pages/profile/Profile';
 import ProfileEdit from './pages/profile/ProfileEdit';
 import AddRoute from './pages/student/AddRoute';
-import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -24,15 +27,14 @@ function VolunteerTabs() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#000000',  // Dark background for tab bar
-          borderTopWidth: 0,  // Remove border at the top of the tab bar
+          position: 'absolute',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)', // Transparent background
+          borderTopWidth: 0,
+          elevation: 0,
         },
-        tabBarActiveTintColor: '#174864',  // Blue color for active tab
-        tabBarInactiveTintColor: '#888',  // Inactive tab icon color
-        tabBarShowLabel: false,  // Hide tab labels
-        tabBarLabelStyle: {
-          display: 'none',  // Ensure labels are completely hidden
-        },
+        tabBarActiveTintColor: '#174864',
+        tabBarInactiveTintColor: '#888',
+        tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
@@ -41,11 +43,27 @@ function VolunteerTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "home" : "home-outline"}
+              name={focused ? 'home' : 'home-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
             />
           ),
+    tabBarBackground: () => (
+      <BlurView
+        tint="dark"
+        intensity={50}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 80,
+        }}
+      />
+    ),
         }}
       />
       <Tab.Screen
@@ -54,9 +72,25 @@ function VolunteerTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "map" : "map-outline"}
+              name={focused ? 'map' : 'map-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
+            />
+          ),
+          tabBarBackground: () => (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100%', // Full height for seamless blending
+              }}
             />
           ),
         }}
@@ -67,9 +101,25 @@ function VolunteerTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "chatbubble" : "chatbubble-outline"}
+              name={focused ? 'chatbubble' : 'chatbubble-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
+            />
+          ),
+          tabBarBackground: () => (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100%', // Full height for seamless blending
+              }}
             />
           ),
         }}
@@ -80,9 +130,25 @@ function VolunteerTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "person" : "person-outline"}
+              name={focused ? 'person' : 'person-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
+            />
+          ),
+          tabBarBackground: () => (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100%', // Full height for seamless blending
+              }}
             />
           ),
         }}
@@ -97,15 +163,14 @@ function StudentTabs() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#000000',  // Dark background for tab bar
-          borderTopWidth: 0,  // Remove border at the top of the tab bar
+          position: 'absolute',
+          backgroundColor: 'rgba(0, 0, 0, 0.3)', // Transparent background
+          borderTopWidth: 0,
+          elevation: 0,
         },
-        tabBarActiveTintColor: '#174864',  // Blue color for active tab
-        tabBarInactiveTintColor: '#888',  // Inactive tab icon color
-        tabBarShowLabel: false,  // Hide tab labels
-        tabBarLabelStyle: {
-          display: 'none',  // Ensure labels are completely hidden
-        },
+        tabBarActiveTintColor: '#174864',
+        tabBarInactiveTintColor: '#888',
+        tabBarShowLabel: false,
       }}
     >
       <Tab.Screen
@@ -114,11 +179,27 @@ function StudentTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "home" : "home-outline"}
+              name={focused ? 'home' : 'home-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
             />
           ),
+    tabBarBackground: () => (
+      <BlurView
+        tint="dark"
+        intensity={50}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 80,
+        }}
+      />
+    ),
         }}
       />
       <Tab.Screen
@@ -127,9 +208,25 @@ function StudentTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "map" : "map-outline"}
+              name={focused ? 'map' : 'map-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
+            />
+          ),
+          tabBarBackground: () => (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100%', // Full height for seamless blending
+              }}
             />
           ),
         }}
@@ -140,9 +237,25 @@ function StudentTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "chatbubble" : "chatbubble-outline"}
+              name={focused ? 'chatbubble' : 'chatbubble-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
+            />
+          ),
+          tabBarBackground: () => (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100%', // Full height for seamless blending
+              }}
             />
           ),
         }}
@@ -153,9 +266,25 @@ function StudentTabs() {
         options={{
           tabBarIcon: ({ color, size, focused }) => (
             <Ionicons
-              name={focused ? "person" : "person-outline"}
+              name={focused ? 'person' : 'person-outline'}
               color={color}
               size={size}
+              style={{
+                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+              }}
+            />
+          ),
+          tabBarBackground: () => (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={{
+                position: 'absolute',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: '100%', // Full height for seamless blending
+              }}
             />
           ),
         }}
@@ -177,7 +306,6 @@ export default function Index() {
         <Stack.Screen name="Conversation" component={Conversation} />
         <Stack.Screen name="ProfileEdit" component={ProfileEdit} />
         <Stack.Screen name="AddRoute" component={AddRoute} />
-
       </Stack.Navigator>
     </NavigationContainer>
   );

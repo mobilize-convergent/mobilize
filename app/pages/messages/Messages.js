@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   senderName: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#E0E0E0', // Light text for sender name
+    color: '#174864', // Light text for sender name
     marginBottom: 4,
   },
   latestMessage: {

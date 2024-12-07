@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import AsyncStorage from '@react-native-async-storage/async-storage';  // Import AsyncStorage
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Dropdown from '../components/Dropdown';
 
 const SignUp = ({ navigation }) => {
@@ -122,9 +122,8 @@ const SignUp = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Sign Up</Text>
+            {/* Removed the comment that was causing the error */}
             {/* Input fields for First Name, Last Name, etc. */}
-            {/* ... (rest of the inputs and button) */}
-            //             {/* New First Name input */}
             <TextInput
                 style={styles.input}
                 placeholder="First Name"
@@ -133,7 +132,6 @@ const SignUp = ({ navigation }) => {
                 value={firstName}
             />
 
-            {/* New Last Name input */}
             <TextInput
                 style={styles.input}
                 placeholder="Last Name"
@@ -142,7 +140,6 @@ const SignUp = ({ navigation }) => {
                 value={lastName}
             />
 
-            {/* New Phone input */}
             <TextInput
                 style={styles.input}
                 placeholder="Phone Number"
@@ -152,7 +149,6 @@ const SignUp = ({ navigation }) => {
                 keyboardType="phone-pad"
             />
 
-            {/* New Biography input */}
             <TextInput
                 style={styles.input}
                 placeholder="Biography"
@@ -163,7 +159,6 @@ const SignUp = ({ navigation }) => {
                 numberOfLines={4}
             />
 
-            {/* Email input */}
             <TextInput
                 style={styles.input}
                 placeholder="Email"
@@ -175,7 +170,6 @@ const SignUp = ({ navigation }) => {
                 autoCorrect={false}
             />
 
-            {/* Password input */}
             <TextInput
                 style={styles.input}
                 placeholder="Password"
@@ -187,7 +181,6 @@ const SignUp = ({ navigation }) => {
                 autoCorrect={false}
             />
 
-            {/* Dropdown for selecting role */}
             <Dropdown
                 label="Select Role"
                 data={roleOptions}
@@ -196,7 +189,6 @@ const SignUp = ({ navigation }) => {
                 placeholder="Select your role"
             />
 
-            {/* Submit Button */}
             <TouchableOpacity
                 style={styles.button}
                 onPress={handleSignUp}
