@@ -5,7 +5,6 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Entypo from '@expo/vector-icons/Entypo';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-
 const Profile = ({ navigation }) => {
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -15,13 +14,14 @@ const Profile = ({ navigation }) => {
     bio: "",
   });
 
-  // Fetch user data from AsyncStorage when the component mounts
+  // Fetch the logged-in user's data from AsyncStorage when the component mounts
   useEffect(() => {
     const loadProfileData = async () => {
       try {
-        const user = await AsyncStorage.getItem('user');
+        const user = await AsyncStorage.getItem('user'); // Fetch data from AsyncStorage
         if (user) {
-          setProfileData(JSON.parse(user));
+          setProfileData(JSON.parse(user)); // Set profile data from the logged-in user
+          console.log("user:"+JSON.stringify(user));
         }
       } catch (error) {
         console.log('Error loading profile data from AsyncStorage', error);
@@ -29,10 +29,10 @@ const Profile = ({ navigation }) => {
     };
 
     loadProfileData();
-  }, []);
+  }, []); // Empty dependency array ensures this effect runs only once when the component mounts
 
   const updateProfile = (updatedData) => {
-    setProfileData(updatedData);
+    setProfileData(updatedData); // Update the profile data in the component state
   };
 
   return (
@@ -47,7 +47,7 @@ const Profile = ({ navigation }) => {
         <Image source={require('../../images/person.png')} style={styles.profilePicture} />
         <View style={styles.userInfo}>
           <Text style={styles.userName}>
-            {profileData.firstName} {profileData.lastName}
+            Jonathan M.
           </Text>
           <Text style={styles.userEmail}>{profileData.email}</Text>
           <TouchableOpacity
@@ -91,7 +91,6 @@ const Profile = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionItem}>
-          {/* <FontAwesome name="question-circle-o" size={20} color="#000" /> */}
           <Text style={styles.optionText}>Help</Text>
           <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
@@ -110,7 +109,6 @@ const Profile = ({ navigation }) => {
           <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
       </ScrollView>
-
     </View>
   );
 };
@@ -187,7 +185,6 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingHorizontal: 6,
     flexShrink: 1,
-    // width: 100, other option - smaller button
   },
   editButtonText: {
     fontSize: 12,

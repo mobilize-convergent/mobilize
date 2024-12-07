@@ -116,11 +116,11 @@ const VolunteerHome = () => {
             </View>
             <Text style={styles.dateText}>{route.date}</Text>
           </View>
-          {isYourRoute && (
+          {/* {isYourRoute && (
             <TouchableOpacity>
               <MaterialIcons name="edit" size={20} color="#a0a0a0" />
             </TouchableOpacity>
-          )}
+          )} */}
         </View>
 
         <View style={styles.routeDetails}>
@@ -260,7 +260,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: '#4ade80',
+    backgroundColor: '#174864',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     color: '#a0a0a0', // Slightly muted text
   },
   availableButton: {
-    backgroundColor: '#4ade80',
+    backgroundColor: '#174864',
     borderRadius: 8,
     paddingVertical: 8,
     marginTop: 12,

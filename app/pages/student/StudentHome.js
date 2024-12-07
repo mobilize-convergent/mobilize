@@ -92,36 +92,32 @@ const StudentHome = ({ navigation, route }) => {
     }
   ]);
 
+  // useEffect(() => {
+  //   const addRoute = navigation.addListener('focus', () => {
+  //     console.log('StudentHome focused');
+  //     const updatedRoutes = route.params;
+  //     console.log('Updated routes:', updatedRoutes);
+
+  //     if (updatedRoutes) {
+  //       console.log('Updated routes:', updatedRoutes);
+  //       setRoutes([...routes, ...updatedRoutes]);
+  //     }
+  //   });
+
+  //   return addRoute;
+  // }, [navigation, route, routes]);
+
+  // The addRoute function should be passed down to the AddRoute screen
   const addRoute = (newRoute) => {
-    setRoutes(prevRoutes => [...prevRoutes, newRoute]);
-  };
-
-  const deleteRoute = (routeToDelete) => {
-    Alert.alert(
-      "Delete Route",
-      "Are you sure you want to delete this route?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Yes, Delete",
-          style: "destructive",
-          onPress: () => {
-            setRoutes(prevRoutes => prevRoutes.filter(route => route !== routeToDelete));
-
-          }
-        }
-      ]
-    );
+    setRoutes((prevRoutes) => [...prevRoutes, newRoute]);
   };
 
   useEffect(() => {
     const addRouteListener = navigation.addListener('focus', () => {
+      console.log('StudentHome focused');
       const updatedRoutes = route.params;
       if (updatedRoutes) {
-        setRoutes(prevRoutes => [...prevRoutes, ...updatedRoutes]);
+        setRoutes((prevRoutes) => [...prevRoutes, ...updatedRoutes]);
       }
     });
 
@@ -132,22 +128,14 @@ const StudentHome = ({ navigation, route }) => {
     <>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Home</Text>
+        <Text style={styles.headerTitle}>Your Routes</Text>
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate('AddRoute', { routes, addRoute })}
+        >
+          <Icon name="add" size={24} color="#000" />
+        </TouchableOpacity>
       </View>
-
-      <View style={styles.container}>
-        <View style={styles.yourRoutesHeader}>
-          <Text style={styles.yourRoutes}>Your Routes</Text>
-          <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => navigation.navigate('AddRoute', {
-              routes: routes,
-              addRoute: addRoute
-            })}
-          >
-            <Icon name="add" size={24} color="#000" />
-          </TouchableOpacity>
-        </View>
 
         <ScrollView style={styles.routesList}>
           {routes.map((route, index) => (
@@ -163,7 +151,6 @@ const StudentHome = ({ navigation, route }) => {
             />
           ))}
         </ScrollView>
-      </View>
     </>
   );
 }
@@ -256,45 +243,6 @@ const styles = StyleSheet.create({
   pendingText: {
     color: '#FF5252',
     textAlign: 'center',
-  },
-  deleteAction: {
-    backgroundColor: '#ff4444',
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-    marginBottom: 12,
-    borderTopRightRadius: 12,
-    borderBottomRightRadius: 12,
-  },
-  deleteActionContent: {
-    flex: 1,
-    backgroundColor: '#ff4444',
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 100,
-    borderTopRightRadius: 12,
-    borderBottomRightRadius: 12,
-  },
-  deleteActionText: {
-    color: 'white',
-    fontWeight: '600',
-    padding: 8,
-  },
-  header: {
-    backgroundColor: '#174864',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 35,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
-  },
-  headerTitle: {
-    color: 'white',
-    fontSize: 25,
-    fontWeight: 'bold',
-    position: 'absolute',
-    alignSelf: 'center',
   },
 });
 

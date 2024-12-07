@@ -1,5 +1,7 @@
-import React, { useState } from 'react'; import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import React, { useState } from 'react'; 
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import * as FileSystem from 'expo-file-system';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Landing = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -7,53 +9,56 @@ const Landing = ({ navigation }) => {
 
   const handleLogin = async () => {
     const usersFileUri = `${FileSystem.documentDirectory}users.json`;
-
+    
     try {
-      // Check if the file exists
-      const fileInfo = await FileSystem.getInfoAsync(usersFileUri);
-      if (!fileInfo.exists) {
-        Alert.alert("Error", "No users found. Please sign up first.");
-        return;
-      }
-
-      // Read and parse the users file
-      const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
-      const users = JSON.parse(usersFile);
-
-      // Find user with matching credentials
-      const user = users.find(u => u.email === email && u.password === password);
-
-      if (user) {
-        // Navigate based on user role
-        if (user.role === 'disabled') {
-          navigation.reset({
-            index: 0,
-            routes: [
-              { name: 'StudentTabs' }
-            ],
-          });
-        } else if (user.role === 'volunteer') {
-          navigation.reset({
-            index: 0,
-            routes: [
-              { name: 'VolunteerTabs' }
-            ],
-          });
+        // Check if the file exists
+        const fileInfo = await FileSystem.getInfoAsync(usersFileUri);
+        if (!fileInfo.exists) {
+            Alert.alert("Error", "No users found. Please sign up first.");
+            return;
         }
-      } else {
-        Alert.alert(
-          "Login Failed",
-          "Invalid email or password. Please try again.",
-          [{ text: "OK" }]
-        );
-      }
+
+        // Read and parse the users file
+        const usersFile = await FileSystem.readAsStringAsync(usersFileUri);
+        const users = JSON.parse(usersFile);
+
+        // Find user with matching credentials
+        const user = users.find(u => u.email === email && u.password === password);
+
+        if (user) {
+            // Save the logged-in user's data to AsyncStorage
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+
+            // Navigate based on user role
+            if (user.role === 'disabled') {
+                navigation.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'StudentTabs' }
+                    ],
+                });
+            } else if (user.role === 'volunteer') {
+                navigation.reset({
+                    index: 0,
+                    routes: [
+                        { name: 'VolunteerTabs' }
+                    ],
+                });
+            }
+        } else {
+            Alert.alert(
+                "Login Failed",
+                "Invalid email or password. Please try again.",
+                [{ text: "OK" }]
+            );
+        }
     } catch (error) {
-      console.error('Error reading users file:', error);
-      Alert.alert(
-        "Error",
-        "An error occurred while trying to log in. Please try again.",
-        [{ text: "OK" }]
-      );
+        console.error('Error reading users file:', error);
+        Alert.alert(
+            "Error",
+            "An error occurred while trying to log in. Please try again.",
+            [{ text: "OK" }]
+        );
     }
   };
 

@@ -97,8 +97,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 16,
     backgroundColor: '#1e1e1e', // Dark message background
-    // borderBottomWidth: 1,
-    // borderBottomColor: '#1e1e1e', // Dark separator
     marginHorizontal: 12,
     marginVertical: 6,
     borderRadius: 12, // Rounded corners
@@ -119,7 +117,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginRight: 12,
     borderWidth: 2,
-    borderColor: '#4A5568', // Border for profile image
+    borderColor: '#174864', // Border for profile image
   },
   textContainer: {
     flex: 1,
