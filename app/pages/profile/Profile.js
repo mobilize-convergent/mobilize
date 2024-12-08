@@ -47,7 +47,8 @@ const Profile = ({ navigation }) => {
         <Image source={require('../../images/person.png')} style={styles.profilePicture} />
         <View style={styles.userInfo}>
           <Text style={styles.userName}>
-            Jonathan M.
+            {/* make this not hard coded */}
+            {profileData.firstName+" "+profileData.lastName}
           </Text>
           <Text style={styles.userEmail}>{profileData.email}</Text>
           <TouchableOpacity
@@ -64,19 +65,9 @@ const Profile = ({ navigation }) => {
         </View>
       </View>
 
-      <View style={styles.imageContainer}>
-        <View style={styles.line} />
-        <Image source={require('../../images/stars.png')} style={styles.stars} />
-        <View style={styles.line} />
-      </View>
 
       {/* Options List */}
       <ScrollView>
-        <TouchableOpacity style={styles.optionItem}>
-          <Ionicons name="location-outline" size={20} color="#000" />
-          <Text style={styles.optionText}>Location</Text>
-          <Entypo name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionItem}>
           <MaterialIcons name="language" size={20} color="#000" />
@@ -85,12 +76,7 @@ const Profile = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.optionItem}>
-          <Ionicons name="time-outline" size={20} color="#000" />
-          <Text style={styles.optionText}>Clear History</Text>
-          <Entypo name="chevron-right" size={20} color="#ccc" />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.optionItem}>
+          <MaterialIcons name="help" size={20} color="#000" />
           <Text style={styles.optionText}>Help</Text>
           <Entypo name="chevron-right" size={20} color="#ccc" />
         </TouchableOpacity>
@@ -116,17 +102,18 @@ const Profile = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    padding: 16,
+    backgroundColor: '#000000', // Dark background
   },
   header: {
-    backgroundColor: '#174864',
+    backgroundColor: '#0a0a0a', // Very dark header
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 35,
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#cccccc',
+    borderBottomColor: '#333333', // Dark border
   },
   headerTitle: {
     color: 'white',
@@ -172,7 +159,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#333",
+    color: "#E0E0E0",
   },
   userEmail: {
     fontSize: 16,
@@ -204,6 +191,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 12,
     fontSize: 16,
+    color: 'white'
   },
 });
 

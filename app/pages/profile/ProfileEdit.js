@@ -92,7 +92,7 @@ const ProfileEdit = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#000000",
     paddingHorizontal: 16,
     paddingTop: 40,
     justifyContent: "space-between",
@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    color: "white",
   },
   inputContainer: {
     marginBottom: 20,
@@ -117,13 +118,14 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingLeft: 10,
     fontSize: 16,
+    color: 'white',
   },
   bioInput: {
     height: 100,
     textAlignVertical: "top", // For multiline text to align at the top
   },
   saveButton: {
-    backgroundColor: "#007BFF",
+    backgroundColor: "#174864",
     paddingVertical: 12,
     borderRadius: 4,
     alignItems: "center",
