@@ -7,9 +7,6 @@ const Messages = ({ navigation }) => {
     { id: '2', sender: 'Amaya M.', message: 'Hello', time: '5 min' },
     { id: '3', sender: 'John V.', message: 'See you soon!', time: 'Yesterday' },
     { id: '4', sender: 'Paula D.', message: 'In the lobby', time: 'Yesterday' },
-    { id: '5', sender: 'Tyler C.', message: 'Thanks, see you next time', time: 'Friday' },
-    { id: '6', sender: 'Aryan M.', message: 'No problem!', time: 'Thursday' },
-    { id: '7', sender: 'Jeanne A.', message: 'Sounds good', time: 'Wednesday' },
   ]);
 
   const renderMessageItem = ({ item }) => (

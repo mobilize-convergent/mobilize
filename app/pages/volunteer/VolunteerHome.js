@@ -14,10 +14,9 @@ const VolunteerHome = () => {
   ]);
 
   const [availableRoutes, setAvailableRoutes] = useState([
-    { id: '6', date: 'Tue, Nov 12 at 4:45 PM', from: 'RLP', to: 'BEL', student: 'Jessica L.' },
+    { id: '6', date: 'Tue, Nov 12 at 4:45 PM', from: 'RLP', to: 'BEL', student: 'Jonathan M.' },
     { id: '7', date: 'Tue, Nov 12 at 8:30 PM', from: 'MAI', to: 'GDC', student: 'Reagan M.' },
     { id: '8', date: 'Wed, Nov 13 at 9:45 AM', from: 'EER', to: 'JES', student: 'Zoe K.' },
-    { id: '9', date: 'Wed, Nov 13 at 11:00 AM', from: 'PCL', to: 'PMA', student: 'Steve R.' }
   ]);
 
   const handleDelete = (routeId) => {

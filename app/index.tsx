@@ -47,7 +47,7 @@ function VolunteerTabs() {
               color={color}
               size={size}
               style={{
-                transform: [{ translateY: 8 }] // Fine-tune the vertical centering if needed
+                transform: [{ translateY: 8 }]
               }}
             />
           ),

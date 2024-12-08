@@ -10,9 +10,15 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Alert
 } from 'react-native';
 import MapView, { Callout, Marker } from 'react-native-maps';
+import axios from 'axios'; // To make HTTP requests
+
+const MODEL_URL = 'https://api-inference.huggingface.co/models/HuggingFaceH4/zephyr-7b-beta';
+const HF_API_KEY = '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';
+
 
 // CustomMarker Component (unchanged)
 const CustomMarker = React.memo(({ title, isSelected }) => (
@@ -71,6 +77,7 @@ const MapScreen = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [filteredBuildings, setFilteredBuildings] = useState([]);
   const [selectedBuilding, setSelectedBuilding] = useState(null);
+  const [newIssue, setNewIssue] = useState(null);
 
   // Define the boundaries of the UT Austin area
   const UTAreaBoundaries = {
@@ -300,6 +307,53 @@ const MapScreen = () => {
     [buildings, selectedBuilding, handleBuildingSelect]
   );
 
+  const handleSend = async () => {
+    // Check if a building is selected
+    if (!searchQuery || searchQuery.trim() === "") {
+      Alert.alert("Error", "A building must be selected.", [
+        { text: "OK", onPress: () => console.log("Error acknowledged") }
+      ]);
+      return;
+    }
+
+    // Check if newIssue is valid
+    if (!newIssue || newIssue.trim() === "") {
+      Alert.alert("Error", "Please provide an accessibility issue.", [
+        { text: "OK", onPress: () => console.log("No issue provided") }
+      ]);
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        MODEL_URL,
+        {
+          "inputs": "Respond with ONLY 'yes' or 'no'. Strictly one word. Determine if this is a valid accessibility issue on a college campus: " + newIssue,
+          "parameters": {
+            "max_new_tokens": 3,
+            "temperature": 0.1,
+            "do_sample": false
+          }
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${HF_API_KEY}`,
+          },
+        }
+      );
+
+      Alert.alert("Message Sent", "Your accessibility issue has been successfully reported.", [
+        { text: "OK", onPress: () => console.log("Issue reported") }
+      ]);
+    } catch (error) {
+      console.error("Error querying GPT-J API: ", error);
+      Alert.alert("Error", "There was an issue processing the accessibility issue.", [
+        { text: "OK", onPress: () => console.log("Error acknowledged") }
+      ]);
+    }
+  };
+
+
   // Rest of the component remains the same (return statement and styles)
   return (
     <>
@@ -334,7 +388,7 @@ const MapScreen = () => {
                 onBlur={handleSearchBlur}
                 placeholder="Search buildings..."
                 placeholderTextColor="rgba(255, 255, 255, 0.5)"
-                style={styles.searchBar}
+                style={[styles.searchBar, { fontSize: 16 }]} // Adjust the font size here
               />
             </View>
           </BlurView>
@@ -369,6 +423,23 @@ const MapScreen = () => {
               />
             </BlurView>
           )}
+
+          {/* New TextInput below the search bar */}
+          <BlurView intensity={20} tint="dark" style={styles.searchBarWrapper}>
+            <View style={styles.searchInputContainer}>
+              <Feather name="info" size={20} color="#BF5700" style={styles.accessibilityIcon} />
+              <TextInput
+                value={newIssue}
+                onChangeText={setNewIssue}
+                placeholder="Add accessibility issue"
+                placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                style={[styles.searchBar, { fontSize: 16, paddingLeft: 7 }]}
+              />
+              <TouchableOpacity style={styles.button} onPress={handleSend}>
+                <Feather name="send" size={20} color="#BF5700" />
+              </TouchableOpacity>
+            </View>
+          </BlurView>
         </View>
       </SafeAreaView>
     </>
@@ -610,6 +681,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     position: 'absolute',
     alignSelf: 'center',
+  },
+  textInputWrapper: {
+    marginTop: 10,
+    borderRadius: 5,
+    padding: 5,
+    backgroundColor: '#222222',
+  },
+  newTextInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingLeft: 10,
+    backgroundColor: '#333333',
+    color: '#fff',
   },
 });
 
