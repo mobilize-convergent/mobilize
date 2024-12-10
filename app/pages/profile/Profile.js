@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000', // Dark background
   },
   header: {
-    backgroundColor: '#0a0a0a', // Very dark header
+    backgroundColor: '#000000', // Very dark header
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',

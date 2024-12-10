@@ -296,7 +296,7 @@ function StudentTabs() {
 export default function Index() {
   return (
     <NavigationContainer independent={true}>
-      <Stack.Navigator initialRouteName="Land" screenOptions={{ headerShown: false }}>
+      <Stack.Navigator initialRouteName="Land" screenOptions={{ headerShown: false, headerMode:"screen" }} >
         <Stack.Screen name="Land" component={Landing} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="VolunteerTabs" component={VolunteerTabs} />

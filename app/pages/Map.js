@@ -164,7 +164,7 @@ const MapScreen = () => {
       description: "Computer Science building with advanced labs",
       latitude: 30.2863,
       longitude: -97.7366,
-      accessibility: "Building is up to disability standards",
+      accessibility: "Main entrance automatic door is not working",
       aliases: ["GDC", "Gates Complex", "Dell Complex"]
     },
     {

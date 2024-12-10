@@ -6,17 +6,12 @@ import { Swipeable } from 'react-native-gesture-handler';
 const VolunteerHome = () => {
   const [activeTab, setActiveTab] = useState('your-routes');
   const [yourRoutes, setYourRoutes] = useState([
-    { id: '1', date: 'Mon, Nov 11 at 7:30 PM', from: 'GSB', to: 'WCP', student: 'Adam A.' },
-    { id: '2', date: 'Tue, Nov 12 at 6:00 AM', from: 'JES', to: 'EER', student: 'Aryan M.' },
-    { id: '3', date: 'Wed, Nov 13 at 8:45 PM', from: 'PCL', to: 'PMA', student: 'Tyler C.' },
-    { id: '4', date: 'Fri, Nov 15 at 8:30 AM', from: 'PCL', to: 'PMA', student: 'Amaya C.' },
-    { id: '5', date: 'Sat, Nov 16 at 10:30 AM', from: 'WEL', to: 'KIN', student: 'Chioma V.' }
   ]);
 
   const [availableRoutes, setAvailableRoutes] = useState([
-    { id: '6', date: 'Tue, Nov 12 at 4:45 PM', from: 'RLP', to: 'BEL', student: 'Jonathan M.' },
-    { id: '7', date: 'Tue, Nov 12 at 8:30 PM', from: 'MAI', to: 'GDC', student: 'Reagan M.' },
-    { id: '8', date: 'Wed, Nov 13 at 9:45 AM', from: 'EER', to: 'JES', student: 'Zoe K.' },
+    { id: '1', date: 'Tue, Dec 11 at 8:00 AM', from: 'JES', to: 'GDC', student: 'Jonathan M.' },
+    { id: '2', date: 'Tue, Nov 12 at 8:30 PM', from: 'MAI', to: 'GDC', student: 'Reagan M.' },
+    { id: '3', date: 'Wed, Nov 13 at 9:45 AM', from: 'EER', to: 'JES', student: 'Zoe K.' },
   ]);
 
   const handleDelete = (routeId) => {

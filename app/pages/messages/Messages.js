@@ -3,10 +3,8 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, StatusBar } 
 
 const Messages = ({ navigation }) => {
   const [messages, setMessages] = useState([
-    { id: '1', sender: 'Adam A.', message: 'I am good, thanks! How about you?', time: '2 min' },
-    { id: '2', sender: 'Amaya M.', message: 'Hello', time: '5 min' },
-    { id: '3', sender: 'John V.', message: 'See you soon!', time: 'Yesterday' },
-    { id: '4', sender: 'Paula D.', message: 'In the lobby', time: 'Yesterday' },
+    { id: '1', sender: 'John V.', message: 'See you soon!', time: 'Yesterday' },
+    { id: '2', sender: 'Paula D.', message: 'In the lobby', time: 'Yesterday' },
   ]);
 
   const renderMessageItem = ({ item }) => (
@@ -20,9 +18,9 @@ const Messages = ({ navigation }) => {
       }
     >
       <View style={styles.messageContent}>
-        <Image 
+        <Image
           source={require('../../images/person.png')} 
-          style={styles.personIcon} 
+          style={styles.personIcon}
         />
         <View style={styles.textContainer}>
           <Text style={styles.senderName}>{item.sender}</Text>

@@ -6,27 +6,6 @@ import { Swipeable } from 'react-native-gesture-handler';
 
 const StudentHome = ({ navigation, route }) => {
   const [routes, setRoutes] = useState([
-    {
-      date: 'Mon, Oct 14',
-      time: '7:00 PM',
-      route: 'GSB → WCP',
-      volunteer: 'Adam A.',
-      status: 'confirmed',
-    },
-    {
-      date: 'Tue, Oct 15',
-      time: '2:00 PM',
-      route: 'EER → GDC',
-      volunteer: null,
-      status: 'pending',
-    },
-    {
-      date: 'Tue, Oct 15',
-      time: '3:45 PM',
-      route: 'GDC → JES',
-      volunteer: null,
-      status: 'pending',
-    }
   ]);
 
   const addRoute = (newRoute) => {
@@ -171,7 +150,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000000', // Dark background
   },
   header: {
-    backgroundColor: '#0a0a0a', // Very dark header
+    backgroundColor: '#000000', // Very dark header
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
